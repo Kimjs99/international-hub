@@ -19,11 +19,16 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className={`relative bg-white rounded-2xl shadow-xl w-full ${sizes[size]} mx-4 max-h-[90vh] overflow-auto`}>
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        className={`relative bg-white rounded-2xl shadow-xl w-full ${sizes[size]} mx-4 max-h-[90vh] overflow-auto`}
+      >
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100">
+          <h2 id="modal-title" className="text-lg font-semibold text-gray-900">{title}</h2>
+          <button onClick={onClose} aria-label="닫기" className="p-1 rounded-lg hover:bg-gray-100">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
