@@ -1,24 +1,35 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import PageLayout from './components/Layout/PageLayout'
+import AdminLayout from './components/Layout/AdminLayout'
+import Spinner from './components/UI/Spinner'
 
-import Home from './pages/Home/index'
-import SchoolList from './pages/Schools/SchoolList'
-import SchoolDetail from './pages/Schools/SchoolDetail'
-import Schedule from './pages/Academic/Schedule'
-import Materials from './pages/Academic/Materials'
-import Programs from './pages/Culture/Programs'
-import Archive from './pages/Culture/Archive'
-import Clubs from './pages/Activities/Clubs'
-import Events from './pages/Activities/Events'
-import GalleryMain from './pages/Gallery/GalleryMain'
-import AlbumDetail from './pages/Gallery/AlbumDetail'
-import NoticeList from './pages/Notices/NoticeList'
-import NoticeDetail from './pages/Notices/NoticeDetail'
-import AdminDashboard from './pages/Admin/Dashboard'
+const Home = lazy(() => import('./pages/Home/index'))
+const SchoolList = lazy(() => import('./pages/Schools/SchoolList'))
+const SchoolDetail = lazy(() => import('./pages/Schools/SchoolDetail'))
+const Schedule = lazy(() => import('./pages/Academic/Schedule'))
+const Materials = lazy(() => import('./pages/Academic/Materials'))
+const Programs = lazy(() => import('./pages/Culture/Programs'))
+const Archive = lazy(() => import('./pages/Culture/Archive'))
+const Clubs = lazy(() => import('./pages/Activities/Clubs'))
+const Events = lazy(() => import('./pages/Activities/Events'))
+const GalleryMain = lazy(() => import('./pages/Gallery/GalleryMain'))
+const AlbumDetail = lazy(() => import('./pages/Gallery/AlbumDetail'))
+const NoticeList = lazy(() => import('./pages/Notices/NoticeList'))
+const NoticeDetail = lazy(() => import('./pages/Notices/NoticeDetail'))
+const Login = lazy(() => import('./pages/Login/index'))
+const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'))
+const SchoolManager = lazy(() => import('./pages/Admin/SchoolManager'))
+const EventManager = lazy(() => import('./pages/Admin/EventManager'))
+const MaterialManager = lazy(() => import('./pages/Admin/MaterialManager'))
+const GalleryManager = lazy(() => import('./pages/Admin/GalleryManager'))
+const NoticeManager = lazy(() => import('./pages/Admin/NoticeManager'))
+const MemberManager = lazy(() => import('./pages/Admin/MemberManager'))
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Suspense fallback={<Spinner className="h-screen" />}>
       <Routes>
         <Route element={<PageLayout />}>
           <Route path="/" element={<Home />} />
@@ -35,8 +46,18 @@ export default function App() {
           <Route path="/notices" element={<NoticeList />} />
           <Route path="/notices/:id" element={<NoticeDetail />} />
         </Route>
-        <Route path="/admin/*" element={<AdminDashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="schools" element={<SchoolManager />} />
+          <Route path="events" element={<EventManager />} />
+          <Route path="materials" element={<MaterialManager />} />
+          <Route path="gallery" element={<GalleryManager />} />
+          <Route path="notices" element={<NoticeManager />} />
+          <Route path="members" element={<MemberManager />} />
+        </Route>
       </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }
