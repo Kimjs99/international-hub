@@ -1,0 +1,17 @@
+{
+  "title": "参加校",
+  "subtitle": "日韓国際交流研究校一覧",
+  "filter": {
+    "all": "すべて",
+    "korea": "韓国",
+    "japan": "日本"
+  },
+  "detail": {
+    "info": "学校情報",
+    "events": "関連行事",
+    "materials": "学術資料",
+    "gallery": "フォトギャラリー",
+    "contact": "お問い合わせ",
+    "website": "ウェブサイト"
+  }
+}

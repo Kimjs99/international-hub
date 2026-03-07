@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "schools": "学校紹介",
+    "academic": "学術交流",
+    "academicSchedule": "共有スケジュール",
+    "academicMaterials": "学術資料室",
+    "culture": "文化交流",
+    "culturePrograms": "文化プログラム",
+    "cultureArchive": "交流記録",
+    "activities": "クラブ・行事",
+    "activityClubs": "クラブ紹介",
+    "activityEvents": "行事日程",
+    "gallery": "フォトギャラリー",
+    "notices": "お知らせ",
+    "admin": "管理者"
+  },
+  "action": {
+    "download": "ダウンロード",
+    "viewMore": "もっと見る",
+    "search": "検索",
+    "submit": "送信",
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "delete": "削除",
+    "save": "保存",
+    "close": "閉じる",
+    "back": "戻る"
+  },
+  "label": {
+    "all": "すべて",
+    "korea": "韓国",
+    "japan": "日本",
+    "online": "オンライン",
+    "offline": "オフライン",
+    "public": "公開",
+    "private": "非公開",
+    "pinned": "固定"
+  },
+  "category": {
+    "academic": "学術",
+    "culture": "文化",
+    "activity": "行事",
+    "general": "一般"
+  },
+  "status": {
+    "loading": "読み込み中...",
+    "empty": "データがありません",
+    "error": "エラーが発生しました"
+  },
+  "footer": {
+    "description": "国際交流研究校間の交流と協力のための共同プラットフォーム",
+    "links": "リンク",
+    "contact": "お問い合わせ",
+    "copyright": "© 2026 国際交流研究校ハブ. All rights reserved."
+  }
+}

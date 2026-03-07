@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "home": "홈",
+    "schools": "학교소개",
+    "academic": "학술교류",
+    "academicSchedule": "공유 일정표",
+    "academicMaterials": "학술 자료실",
+    "culture": "문화교류",
+    "culturePrograms": "문화 프로그램",
+    "cultureArchive": "교류 기록",
+    "activities": "동아리 및 행사",
+    "activityClubs": "동아리 소개",
+    "activityEvents": "행사 일정",
+    "gallery": "사진첩",
+    "notices": "공지사항",
+    "admin": "관리자"
+  },
+  "action": {
+    "download": "다운로드",
+    "viewMore": "더 보기",
+    "search": "검색",
+    "submit": "제출",
+    "cancel": "취소",
+    "edit": "수정",
+    "delete": "삭제",
+    "save": "저장",
+    "close": "닫기",
+    "back": "뒤로가기"
+  },
+  "label": {
+    "all": "전체",
+    "korea": "한국",
+    "japan": "일본",
+    "online": "온라인",
+    "offline": "오프라인",
+    "public": "공개",
+    "private": "비공개",
+    "pinned": "고정"
+  },
+  "category": {
+    "academic": "학술",
+    "culture": "문화",
+    "activity": "행사",
+    "general": "일반"
+  },
+  "status": {
+    "loading": "불러오는 중...",
+    "empty": "데이터가 없습니다",
+    "error": "오류가 발생했습니다"
+  },
+  "footer": {
+    "description": "국제교류 연구학교 간 소통과 협력을 위한 공동 플랫폼",
+    "links": "바로가기",
+    "contact": "연락처",
+    "copyright": "© 2026 국제교류 연구학교 허브. All rights reserved."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "clubs": {
+    "title": "クラブ紹介",
+    "subtitle": "日韓参加校のクラブ一覧",
+    "filter": {
+      "all": "すべて",
+      "academic": "学術",
+      "culture": "文化",
+      "sports": "スポーツ",
+      "volunteer": "ボランティア"
+    }
+  },
+  "events": {
+    "title": "行事日程",
+    "subtitle": "日韓交流行事スケジュールのご案内"
+  }
+}

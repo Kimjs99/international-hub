@@ -1,0 +1,21 @@
+{
+  "schedule": {
+    "title": "공유 일정표",
+    "subtitle": "한·일 참여 학교의 학술 행사 일정",
+    "legend": {
+      "academic": "학술",
+      "culture": "문화",
+      "activity": "활동",
+      "general": "일반"
+    }
+  },
+  "materials": {
+    "title": "학술 자료실",
+    "subtitle": "교류 관련 학술 자료 모음",
+    "searchPlaceholder": "자료 검색...",
+    "filter": {
+      "category": "카테고리",
+      "school": "학교"
+    }
+  }
+}

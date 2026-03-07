@@ -1,0 +1,21 @@
+{
+  "schedule": {
+    "title": "共有スケジュール",
+    "subtitle": "日韓参加校の学術行事スケジュール",
+    "legend": {
+      "academic": "学術",
+      "culture": "文化",
+      "activity": "活動",
+      "general": "一般"
+    }
+  },
+  "materials": {
+    "title": "学術資料室",
+    "subtitle": "交流関連学術資料集",
+    "searchPlaceholder": "資料を検索...",
+    "filter": {
+      "category": "カテゴリー",
+      "school": "学校"
+    }
+  }
+}

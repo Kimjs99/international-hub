@@ -1,0 +1,17 @@
+{
+  "clubs": {
+    "title": "동아리 소개",
+    "subtitle": "한·일 참여 학교의 동아리 목록",
+    "filter": {
+      "all": "전체",
+      "academic": "학술",
+      "culture": "문화",
+      "sports": "스포츠",
+      "volunteer": "봉사"
+    }
+  },
+  "events": {
+    "title": "행사 일정",
+    "subtitle": "한·일 교류 행사 일정 안내"
+  }
+}

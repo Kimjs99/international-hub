@@ -1,0 +1,17 @@
+{
+  "title": "참여 학교",
+  "subtitle": "한·일 국제교류 연구학교 목록",
+  "filter": {
+    "all": "전체",
+    "korea": "한국",
+    "japan": "일본"
+  },
+  "detail": {
+    "info": "학교 정보",
+    "events": "관련 행사",
+    "materials": "학술 자료",
+    "gallery": "사진첩",
+    "contact": "연락처",
+    "website": "웹사이트"
+  }
+}
