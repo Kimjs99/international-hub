@@ -1,0 +1,17 @@
+{
+  "title": "Participating Schools",
+  "subtitle": "Korea–Japan International Exchange School Directory",
+  "filter": {
+    "all": "All",
+    "korea": "Korea",
+    "japan": "Japan"
+  },
+  "detail": {
+    "info": "School Info",
+    "events": "Related Events",
+    "materials": "Academic Resources",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "website": "Website"
+  }
+}

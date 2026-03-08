@@ -6,8 +6,8 @@ import Modal from '../../components/UI/Modal'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 
 const EMPTY_FORM = {
-  name_ko: '', name_ja: '', country: 'KR', city: '',
-  description_ko: '', description_ja: '',
+  name_ko: '', name_ja: '', name_en: '', country: 'KR', city: '',
+  description_ko: '', description_ja: '', description_en: '',
   contact_name: '', contact_email: '', website_url: '',
 }
 
@@ -16,6 +16,7 @@ export default function SchoolManager() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null) // null = 추가, object = 수정
   const [form, setForm] = useState(EMPTY_FORM)
+  const [activeTab, setActiveTab] = useState('ko')
 
   const { data: schools, isLoading } = useQuery({
     queryKey: ['admin', 'schools'],
@@ -53,6 +54,7 @@ export default function SchoolManager() {
   const openAdd = () => {
     setEditing(null)
     setForm(EMPTY_FORM)
+    setActiveTab('ko')
     setModalOpen(true)
   }
 
@@ -61,14 +63,17 @@ export default function SchoolManager() {
     setForm({
       name_ko: school.name_ko ?? '',
       name_ja: school.name_ja ?? '',
+      name_en: school.name_en ?? '',
       country: school.country ?? 'KR',
       city: school.city ?? '',
       description_ko: school.description_ko ?? '',
       description_ja: school.description_ja ?? '',
+      description_en: school.description_en ?? '',
       contact_name: school.contact_name ?? '',
       contact_email: school.contact_email ?? '',
       website_url: school.website_url ?? '',
     })
+    setActiveTab('ko')
     setModalOpen(true)
   }
 
@@ -76,6 +81,7 @@ export default function SchoolManager() {
     setModalOpen(false)
     setEditing(null)
     setForm(EMPTY_FORM)
+    setActiveTab('ko')
   }
 
   const handleDelete = (school) => {
@@ -152,17 +158,64 @@ export default function SchoolManager() {
 
       <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? '학교 수정' : '학교 추가'} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">학교명 (한국어) *</label>
-              <input type="text" value={form.name_ko} onChange={set('name_ko')} required
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+          <div>
+            <div className="flex border-b mb-3">
+              {[
+                { id: 'ko', label: '🇰🇷 한국어' },
+                { id: 'ja', label: '🇯🇵 日本語' },
+                { id: 'en', label: '🇬🇧 English' },
+              ].map(tab => (
+                <button key={tab.id} type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === tab.id ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}>
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">학교명 (일본어)</label>
-              <input type="text" value={form.name_ja} onChange={set('name_ja')}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
+            {activeTab === 'ko' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">학교명 (한국어) *</label>
+                  <input type="text" value={form.name_ko} onChange={set('name_ko')} required
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">학교 소개 (한국어)</label>
+                  <textarea value={form.description_ko} onChange={set('description_ko')} rows={3}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'ja' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">학교명 (일본어)</label>
+                  <input type="text" value={form.name_ja} onChange={set('name_ja')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">학교 소개 (일본어)</label>
+                  <textarea value={form.description_ja} onChange={set('description_ja')} rows={3}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'en' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">School Name (English)</label>
+                  <input type="text" value={form.name_en} onChange={set('name_en')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">School Description (English)</label>
+                  <textarea value={form.description_en} onChange={set('description_en')} rows={3}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -178,16 +231,6 @@ export default function SchoolManager() {
               <input type="text" value={form.city} onChange={set('city')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">학교 소개 (한국어)</label>
-            <textarea value={form.description_ko} onChange={set('description_ko')} rows={3}
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">학교 소개 (일본어)</label>
-            <textarea value={form.description_ja} onChange={set('description_ja')} rows={3}
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

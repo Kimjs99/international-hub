@@ -1,0 +1,8 @@
+{
+  "nav": { "home": "Home", "schools": "Schools", "academic": "Academic", "academicSchedule": "Shared Schedule", "academicMaterials": "Academic Resources", "culture": "Culture", "culturePrograms": "Cultural Programs", "cultureArchive": "Exchange Archive", "activities": "Clubs & Events", "activityClubs": "Club Directory", "activityEvents": "Event Schedule", "gallery": "Gallery", "notices": "Notices", "admin": "Admin" },
+  "action": { "download": "Download", "viewMore": "View More", "search": "Search", "submit": "Submit", "cancel": "Cancel", "edit": "Edit", "delete": "Delete", "save": "Save", "close": "Close", "back": "Back" },
+  "label": { "all": "All", "korea": "Korea", "japan": "Japan", "online": "Online", "offline": "Offline", "public": "Public", "private": "Private", "pinned": "Pinned" },
+  "category": { "academic": "Academic", "culture": "Culture", "activity": "Event", "general": "General" },
+  "status": { "loading": "Loading...", "empty": "No data available", "error": "An error has occurred" },
+  "footer": { "description": "A shared platform for communication and collaboration among international exchange research schools", "links": "Quick Links", "contact": "Contact", "copyright": "© 2026–2027 Hwajeop Middle School · Japan High School International Exchange School Council. This platform is a non-profit site for educational purposes. Unauthorized reproduction or redistribution is prohibited." }
+}

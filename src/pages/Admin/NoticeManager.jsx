@@ -6,8 +6,8 @@ import Modal from '../../components/UI/Modal'
 import { Plus, Pencil, Trash2, Pin } from 'lucide-react'
 
 const EMPTY_FORM = {
-  title_ko: '', title_ja: '',
-  content_ko: '', content_ja: '',
+  title_ko: '', title_ja: '', title_en: '',
+  content_ko: '', content_ja: '', content_en: '',
   is_pinned: false, target_school_id: '',
 }
 
@@ -77,8 +77,10 @@ export default function NoticeManager() {
     setForm({
       title_ko: notice.title_ko ?? '',
       title_ja: notice.title_ja ?? '',
+      title_en: notice.title_en ?? '',
       content_ko: notice.content_ko ?? '',
       content_ja: notice.content_ja ?? '',
+      content_en: notice.content_en ?? '',
       is_pinned: notice.is_pinned ?? false,
       target_school_id: notice.target_school_id ?? '',
     })
@@ -90,6 +92,7 @@ export default function NoticeManager() {
     setModalOpen(false)
     setEditing(null)
     setForm(EMPTY_FORM)
+    setActiveTab('ko')
   }
 
   const handleDelete = (notice) => {
@@ -170,44 +173,66 @@ export default function NoticeManager() {
 
       <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? '공지 수정' : '공지 작성'} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
-              <input type="text" value={form.title_ko} onChange={set('title_ko')} required
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
-              <input type="text" value={form.title_ja} onChange={set('title_ja')}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
-          </div>
-
           <div>
             <div className="flex border-b mb-3">
-              <button type="button"
-                onClick={() => setActiveTab('ko')}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'ko' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}>
-                한국어 내용
-              </button>
-              <button type="button"
-                onClick={() => setActiveTab('ja')}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'ja' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}>
-                일본어 내용
-              </button>
+              {[
+                { id: 'ko', label: '🇰🇷 한국어' },
+                { id: 'ja', label: '🇯🇵 日本語' },
+                { id: 'en', label: '🇬🇧 English' },
+              ].map(tab => (
+                <button key={tab.id} type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === tab.id ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}>
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            {activeTab === 'ko' ? (
-              <textarea value={form.content_ko} onChange={set('content_ko')} rows={6}
-                placeholder="한국어 내용을 입력하세요"
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            ) : (
-              <textarea value={form.content_ja} onChange={set('content_ja')} rows={6}
-                placeholder="일본어 내용을 입력하세요"
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+            {activeTab === 'ko' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
+                  <input type="text" value={form.title_ko} onChange={set('title_ko')} required
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">내용 (한국어)</label>
+                  <textarea value={form.content_ko} onChange={set('content_ko')} rows={6}
+                    placeholder="한국어 내용을 입력하세요"
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'ja' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
+                  <input type="text" value={form.title_ja} onChange={set('title_ja')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">내용 (일본어)</label>
+                  <textarea value={form.content_ja} onChange={set('content_ja')} rows={6}
+                    placeholder="일본어 내용을 입력하세요"
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'en' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title (English)</label>
+                  <input type="text" value={form.title_en} onChange={set('title_en')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Content (English)</label>
+                  <textarea value={form.content_en} onChange={set('content_en')} rows={6}
+                    placeholder="Enter content in English"
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
             )}
           </div>
 

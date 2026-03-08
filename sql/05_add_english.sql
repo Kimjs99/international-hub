@@ -1,0 +1,32 @@
+-- WF-15: 영어 지원 추가
+-- Supabase SQL Editor에서 실행
+
+-- _ja 컬럼 NOT NULL 제약 해제 (선택 입력 허용)
+ALTER TABLE schools ALTER COLUMN name_ja DROP NOT NULL;
+ALTER TABLE events ALTER COLUMN title_ja DROP NOT NULL;
+ALTER TABLE materials ALTER COLUMN title_ja DROP NOT NULL;
+ALTER TABLE gallery_albums ALTER COLUMN title_ja DROP NOT NULL;
+ALTER TABLE notices ALTER COLUMN title_ja DROP NOT NULL;
+ALTER TABLE club_groups ALTER COLUMN name_ja DROP NOT NULL;
+
+-- _en 컬럼 추가
+ALTER TABLE schools ADD COLUMN IF NOT EXISTS name_en TEXT;
+ALTER TABLE schools ADD COLUMN IF NOT EXISTS description_en TEXT;
+
+ALTER TABLE events ADD COLUMN IF NOT EXISTS title_en TEXT;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS description_en TEXT;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS location_en TEXT;
+
+ALTER TABLE materials ADD COLUMN IF NOT EXISTS title_en TEXT;
+ALTER TABLE materials ADD COLUMN IF NOT EXISTS description_en TEXT;
+
+ALTER TABLE gallery_albums ADD COLUMN IF NOT EXISTS title_en TEXT;
+ALTER TABLE gallery_albums ADD COLUMN IF NOT EXISTS description_en TEXT;
+
+ALTER TABLE gallery_photos ADD COLUMN IF NOT EXISTS caption_en TEXT;
+
+ALTER TABLE notices ADD COLUMN IF NOT EXISTS title_en TEXT;
+ALTER TABLE notices ADD COLUMN IF NOT EXISTS content_en TEXT;
+
+ALTER TABLE club_groups ADD COLUMN IF NOT EXISTS name_en TEXT;
+ALTER TABLE club_groups ADD COLUMN IF NOT EXISTS description_en TEXT;

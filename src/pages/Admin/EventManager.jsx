@@ -9,8 +9,8 @@ const CATEGORIES = ['academic', 'culture', 'activity', 'general']
 const CATEGORY_LABELS = { academic: '학술', culture: '문화', activity: '활동', general: '일반' }
 
 const EMPTY_FORM = {
-  title_ko: '', title_ja: '', category: 'academic',
-  start_date: '', end_date: '', location_ko: '', location_ja: '',
+  title_ko: '', title_ja: '', title_en: '', category: 'academic',
+  start_date: '', end_date: '', location_ko: '', location_ja: '', location_en: '',
   is_online: false, school_id: '',
 }
 
@@ -19,6 +19,7 @@ export default function EventManager() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
+  const [activeTab, setActiveTab] = useState('ko')
 
   const { data: events, isLoading } = useQuery({
     queryKey: ['admin', 'events'],
@@ -69,6 +70,7 @@ export default function EventManager() {
   const openAdd = () => {
     setEditing(null)
     setForm(EMPTY_FORM)
+    setActiveTab('ko')
     setModalOpen(true)
   }
 
@@ -77,14 +79,17 @@ export default function EventManager() {
     setForm({
       title_ko: event.title_ko ?? '',
       title_ja: event.title_ja ?? '',
+      title_en: event.title_en ?? '',
       category: event.category ?? 'academic',
       start_date: event.start_date ?? '',
       end_date: event.end_date ?? '',
       location_ko: event.location_ko ?? '',
       location_ja: event.location_ja ?? '',
+      location_en: event.location_en ?? '',
       is_online: event.is_online ?? false,
       school_id: event.school_id ?? '',
     })
+    setActiveTab('ko')
     setModalOpen(true)
   }
 
@@ -92,6 +97,7 @@ export default function EventManager() {
     setModalOpen(false)
     setEditing(null)
     setForm(EMPTY_FORM)
+    setActiveTab('ko')
   }
 
   const handleDelete = (event) => {
@@ -167,17 +173,64 @@ export default function EventManager() {
 
       <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? '행사 수정' : '행사 추가'} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
-              <input type="text" value={form.title_ko} onChange={set('title_ko')} required
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+          <div>
+            <div className="flex border-b mb-3">
+              {[
+                { id: 'ko', label: '🇰🇷 한국어' },
+                { id: 'ja', label: '🇯🇵 日本語' },
+                { id: 'en', label: '🇬🇧 English' },
+              ].map(tab => (
+                <button key={tab.id} type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === tab.id ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}>
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
-              <input type="text" value={form.title_ja} onChange={set('title_ja')}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
+            {activeTab === 'ko' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
+                  <input type="text" value={form.title_ko} onChange={set('title_ko')} required
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">장소 (한국어)</label>
+                  <input type="text" value={form.location_ko} onChange={set('location_ko')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'ja' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
+                  <input type="text" value={form.title_ja} onChange={set('title_ja')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">장소 (일본어)</label>
+                  <input type="text" value={form.location_ja} onChange={set('location_ja')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'en' && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title (English)</label>
+                  <input type="text" value={form.title_en} onChange={set('title_en')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Location (English)</label>
+                  <input type="text" value={form.location_en} onChange={set('location_en')}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -209,18 +262,6 @@ export default function EventManager() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">종료일</label>
               <input type="date" value={form.end_date} onChange={set('end_date')}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">장소 (한국어)</label>
-              <input type="text" value={form.location_ko} onChange={set('location_ko')}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">장소 (일본어)</label>
-              <input type="text" value={form.location_ja} onChange={set('location_ja')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
             </div>
           </div>

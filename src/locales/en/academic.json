@@ -1,0 +1,21 @@
+{
+  "schedule": {
+    "title": "Shared Schedule",
+    "subtitle": "Academic event schedule for Korea–Japan participating schools",
+    "legend": {
+      "academic": "Academic",
+      "culture": "Culture",
+      "activity": "Activity",
+      "general": "General"
+    }
+  },
+  "materials": {
+    "title": "Academic Resources",
+    "subtitle": "Collection of academic materials related to exchanges",
+    "searchPlaceholder": "Search resources...",
+    "filter": {
+      "category": "Category",
+      "school": "School"
+    }
+  }
+}

@@ -6,7 +6,7 @@ import Modal from '../../components/UI/Modal'
 import { Plus, ChevronLeft, Trash2, Upload, Image } from 'lucide-react'
 
 const EMPTY_ALBUM_FORM = {
-  title_ko: '', title_ja: '', taken_date: '', school_id: '', is_public: true,
+  title_ko: '', title_ja: '', title_en: '', taken_date: '', school_id: '', is_public: true,
 }
 
 const uploadPhotos = async (albumId, files) => {
@@ -28,6 +28,7 @@ export default function GalleryManager() {
   const [albumModalOpen, setAlbumModalOpen] = useState(false)
   const [albumForm, setAlbumForm] = useState(EMPTY_ALBUM_FORM)
   const [uploadError, setUploadError] = useState('')
+  const [activeTab, setActiveTab] = useState('ko')
 
   const { data: albums, isLoading: albumsLoading } = useQuery({
     queryKey: ['admin', 'gallery-albums'],
@@ -239,20 +240,46 @@ export default function GalleryManager() {
         </table>
       </div>
 
-      <Modal isOpen={albumModalOpen} onClose={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM) }}
+      <Modal isOpen={albumModalOpen} onClose={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko') }}
         title="앨범 생성">
         <form onSubmit={handleAlbumSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">앨범 제목 (한국어) *</label>
-              <input type="text" value={albumForm.title_ko} onChange={setAlbum('title_ko')} required
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+          <div>
+            <div className="flex border-b mb-3">
+              {[
+                { id: 'ko', label: '🇰🇷 한국어' },
+                { id: 'ja', label: '🇯🇵 日本語' },
+                { id: 'en', label: '🇬🇧 English' },
+              ].map(tab => (
+                <button key={tab.id} type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === tab.id ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}>
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">앨범 제목 (일본어)</label>
-              <input type="text" value={albumForm.title_ja} onChange={setAlbum('title_ja')}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-            </div>
+            {activeTab === 'ko' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">앨범 제목 (한국어) *</label>
+                <input type="text" value={albumForm.title_ko} onChange={setAlbum('title_ko')} required
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+              </div>
+            )}
+            {activeTab === 'ja' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">앨범 제목 (일본어)</label>
+                <input type="text" value={albumForm.title_ja} onChange={setAlbum('title_ja')}
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+              </div>
+            )}
+            {activeTab === 'en' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Album Title (English)</label>
+                <input type="text" value={albumForm.title_en} onChange={setAlbum('title_en')}
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -277,7 +304,7 @@ export default function GalleryManager() {
             <label htmlFor="is_public" className="text-sm text-gray-700">공개 앨범</label>
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM) }}
+            <button type="button" onClick={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko') }}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">
               취소
             </button>

@@ -1,0 +1,17 @@
+{
+  "clubs": {
+    "title": "Club Directory",
+    "subtitle": "Club listings for Korea–Japan participating schools",
+    "filter": {
+      "all": "All",
+      "academic": "Academic",
+      "culture": "Culture",
+      "sports": "Sports",
+      "volunteer": "Volunteer"
+    }
+  },
+  "events": {
+    "title": "Event Schedule",
+    "subtitle": "Korea–Japan exchange event schedule guide"
+  }
+}

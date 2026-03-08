@@ -20,6 +20,15 @@ import jaActivities from '../locales/ja/activities.json'
 import jaGallery from '../locales/ja/gallery.json'
 import jaNotices from '../locales/ja/notices.json'
 
+import enCommon from '../locales/en/common.json'
+import enHome from '../locales/en/home.json'
+import enSchools from '../locales/en/schools.json'
+import enAcademic from '../locales/en/academic.json'
+import enCulture from '../locales/en/culture.json'
+import enActivities from '../locales/en/activities.json'
+import enGallery from '../locales/en/gallery.json'
+import enNotices from '../locales/en/notices.json'
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -44,6 +53,16 @@ i18n
         activities: jaActivities,
         gallery: jaGallery,
         notices: jaNotices,
+      },
+      en: {
+        common: enCommon,
+        home: enHome,
+        schools: enSchools,
+        academic: enAcademic,
+        culture: enCulture,
+        activities: enActivities,
+        gallery: enGallery,
+        notices: enNotices,
       },
     },
     fallbackLng: 'ko',
