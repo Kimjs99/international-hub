@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/((?!locales|assets|.*\\..*).*)", "destination": "/index.html" }]
+}
