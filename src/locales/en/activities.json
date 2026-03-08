@@ -12,6 +12,10 @@
   },
   "events": {
     "title": "Event Schedule",
-    "subtitle": "Korea–Japan exchange event schedule guide"
+    "subtitle": "Korea–Japan exchange event schedule guide",
+    "upcoming": "Upcoming Events",
+    "past": "Past Events",
+    "emptyUpcoming": "No upcoming events",
+    "emptyPast": "No past events"
   }
 }

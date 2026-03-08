@@ -10,6 +10,7 @@ import koCulture from '../locales/ko/culture.json'
 import koActivities from '../locales/ko/activities.json'
 import koGallery from '../locales/ko/gallery.json'
 import koNotices from '../locales/ko/notices.json'
+import koAdmin from '../locales/ko/admin.json'
 
 import jaCommon from '../locales/ja/common.json'
 import jaHome from '../locales/ja/home.json'
@@ -19,6 +20,7 @@ import jaCulture from '../locales/ja/culture.json'
 import jaActivities from '../locales/ja/activities.json'
 import jaGallery from '../locales/ja/gallery.json'
 import jaNotices from '../locales/ja/notices.json'
+import jaAdmin from '../locales/ja/admin.json'
 
 import enCommon from '../locales/en/common.json'
 import enHome from '../locales/en/home.json'
@@ -28,6 +30,7 @@ import enCulture from '../locales/en/culture.json'
 import enActivities from '../locales/en/activities.json'
 import enGallery from '../locales/en/gallery.json'
 import enNotices from '../locales/en/notices.json'
+import enAdmin from '../locales/en/admin.json'
 
 i18n
   .use(LanguageDetector)
@@ -43,6 +46,7 @@ i18n
         activities: koActivities,
         gallery: koGallery,
         notices: koNotices,
+        admin: koAdmin,
       },
       ja: {
         common: jaCommon,
@@ -53,6 +57,7 @@ i18n
         activities: jaActivities,
         gallery: jaGallery,
         notices: jaNotices,
+        admin: jaAdmin,
       },
       en: {
         common: enCommon,
@@ -63,13 +68,14 @@ i18n
         activities: enActivities,
         gallery: enGallery,
         notices: enNotices,
+        admin: enAdmin,
       },
     },
     fallbackLng: 'ko',
     defaultNS: 'common',
     interpolation: { escapeValue: false },
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       caches: ['localStorage'],
       lookupLocalStorage: 'language',
     },

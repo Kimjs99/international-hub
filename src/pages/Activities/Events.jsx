@@ -19,8 +19,8 @@ export default function Events() {
   const displayed = tab === 'upcoming' ? upcoming : past
 
   const TABS = [
-    { key: 'upcoming', label: lang === 'ko' ? '예정 행사' : '予定行事' },
-    { key: 'past',     label: lang === 'ko' ? '지난 행사' : '過去の行事' },
+    { key: 'upcoming', label: t('events.upcoming') },
+    { key: 'past',     label: t('events.past') },
   ]
 
   return (
@@ -53,17 +53,13 @@ export default function Events() {
       {isError && (
         <EmptyState
           icon={CalendarDays}
-          title={lang === 'ko' ? '데이터를 불러오지 못했습니다' : 'データの取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && displayed.length === 0 && (
         <EmptyState
           icon={CalendarDays}
-          title={
-            tab === 'upcoming'
-              ? lang === 'ko' ? '예정된 행사가 없습니다' : '予定されている行事はありません'
-              : lang === 'ko' ? '지난 행사가 없습니다' : '過去の行事はありません'
-          }
+          title={tab === 'upcoming' ? t('events.emptyUpcoming') : t('events.emptyPast')}
         />
       )}
       {!isLoading && !isError && displayed.length > 0 && (

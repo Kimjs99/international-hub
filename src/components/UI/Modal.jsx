@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 
 export default function Modal({ isOpen, onClose, title, children, size = 'md' }) {
+  const { t } = useTranslation()
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
@@ -28,7 +30,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
       >
         <div className="flex items-center justify-between p-6 border-b">
           <h2 id="modal-title" className="text-lg font-semibold text-gray-900">{title}</h2>
-          <button onClick={onClose} aria-label="닫기" className="p-1 rounded-lg hover:bg-gray-100">
+          <button onClick={onClose} aria-label={t('action.close')} className="p-1 rounded-lg hover:bg-gray-100">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>

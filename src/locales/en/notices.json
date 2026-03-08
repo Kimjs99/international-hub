@@ -2,5 +2,7 @@
   "title": "Notices",
   "subtitle": "International Exchange Hub announcements and information",
   "back": "Back to Notices",
-  "pinned": "Pinned Notice"
+  "pinned": "Pinned Notice",
+  "errorLoad": "Failed to load the notice",
+  "errorNotFound": "This notice does not exist"
 }

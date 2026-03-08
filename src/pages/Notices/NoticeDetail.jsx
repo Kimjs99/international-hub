@@ -33,13 +33,13 @@ export default function NoticeDetail() {
       {isError && (
         <EmptyState
           icon={Bell}
-          title={lang === 'ko' ? '공지사항을 불러오지 못했습니다' : 'お知らせの取得に失敗しました'}
+          title={t('errorLoad')}
         />
       )}
       {!isLoading && !isError && !notice && (
         <EmptyState
           icon={Bell}
-          title={lang === 'ko' ? '존재하지 않는 공지사항입니다' : '存在しないお知らせです'}
+          title={t('errorNotFound')}
         />
       )}
       {!isLoading && !isError && notice && (
@@ -57,7 +57,7 @@ export default function NoticeDetail() {
               {lang === 'ko' ? notice.title_ko : notice.title_ja}
             </h1>
             <p className="mt-2 text-sm text-gray-400">
-              {format(new Date(notice.created_at), 'yyyy년 MM월 dd일')}
+              {format(new Date(notice.created_at), lang === 'en' ? 'MMM dd, yyyy' : lang === 'ja' ? 'yyyy年MM月dd日' : 'yyyy년 MM월 dd일')}
             </p>
           </div>
 

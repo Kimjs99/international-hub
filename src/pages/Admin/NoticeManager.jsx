@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/UI/Spinner'
@@ -12,6 +13,7 @@ const EMPTY_FORM = {
 }
 
 export default function NoticeManager() {
+  const { t } = useTranslation('admin')
   const qc = useQueryClient()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -96,7 +98,7 @@ export default function NoticeManager() {
   }
 
   const handleDelete = (notice) => {
-    if (!window.confirm(`"${notice.title_ko}" 공지를 삭제하시겠습니까?`)) return
+    if (!window.confirm(`"${notice.title_ko}" ${t('notice.confirmDelete')}`)) return
     deleteMutation.mutate(notice.id)
   }
 
@@ -113,11 +115,11 @@ export default function NoticeManager() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">공지 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('notice.title')}</h1>
         <button onClick={openAdd}
           className="flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
           <Plus className="w-4 h-4" />
-          공지 작성
+          {t('notice.add')}
         </button>
       </div>
 
@@ -125,10 +127,10 @@ export default function NoticeManager() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">제목 (한)</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">고정</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">대상 학교</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">작성일</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('notice.colTitle')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('notice.colPinned')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('notice.colSchool')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('notice.colDate')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -141,10 +143,10 @@ export default function NoticeManager() {
                 </td>
                 <td className="px-4 py-3">
                   {notice.is_pinned ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-50 text-primary-700">고정</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-50 text-primary-700">{t('notice.pinned')}</span>
                   ) : '-'}
                 </td>
-                <td className="px-4 py-3 text-gray-600">{notice.schools?.name_ko ?? '전체'}</td>
+                <td className="px-4 py-3 text-gray-600">{notice.schools?.name_ko ?? t('common.all')}</td>
                 <td className="px-4 py-3 text-gray-600">
                   {notice.created_at ? new Date(notice.created_at).toLocaleDateString('ko-KR') : '-'}
                 </td>
@@ -164,21 +166,21 @@ export default function NoticeManager() {
             ))}
             {notices?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">등록된 공지가 없습니다.</td>
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">{t('notice.empty')}</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? '공지 수정' : '공지 작성'} size="lg">
+      <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? t('notice.edit') : t('notice.add')} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex border-b mb-3">
               {[
-                { id: 'ko', label: '🇰🇷 한국어' },
-                { id: 'ja', label: '🇯🇵 日本語' },
-                { id: 'en', label: '🇬🇧 English' },
+                { id: 'ko', label: t('common.tabKo') },
+                { id: 'ja', label: t('common.tabJa') },
+                { id: 'en', label: t('common.tabEn') },
               ].map(tab => (
                 <button key={tab.id} type="button"
                   onClick={() => setActiveTab(tab.id)}
@@ -192,14 +194,14 @@ export default function NoticeManager() {
             {activeTab === 'ko' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('notice.labelTitleKo')} *</label>
                   <input type="text" value={form.title_ko} onChange={set('title_ko')} required
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">내용 (한국어)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('notice.labelContentKo')}</label>
                   <textarea value={form.content_ko} onChange={set('content_ko')} rows={6}
-                    placeholder="한국어 내용을 입력하세요"
+                    placeholder={t('notice.placeholderKo')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
               </div>
@@ -207,14 +209,14 @@ export default function NoticeManager() {
             {activeTab === 'ja' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('notice.labelTitleJa')}</label>
                   <input type="text" value={form.title_ja} onChange={set('title_ja')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">내용 (일본어)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('notice.labelContentJa')}</label>
                   <textarea value={form.content_ja} onChange={set('content_ja')} rows={6}
-                    placeholder="일본어 내용을 입력하세요"
+                    placeholder={t('notice.placeholderJa')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
               </div>
@@ -222,14 +224,14 @@ export default function NoticeManager() {
             {activeTab === 'en' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title (English)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('notice.labelTitleEn')}</label>
                   <input type="text" value={form.title_en} onChange={set('title_en')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Content (English)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('notice.labelContentEn')}</label>
                   <textarea value={form.content_en} onChange={set('content_en')} rows={6}
-                    placeholder="Enter content in English"
+                    placeholder={t('notice.placeholderEn')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
               </div>
@@ -240,12 +242,12 @@ export default function NoticeManager() {
             <div className="flex items-center gap-2">
               <input type="checkbox" id="is_pinned" checked={form.is_pinned} onChange={setCheck('is_pinned')}
                 className="w-4 h-4 rounded border-gray-300 text-primary-500" />
-              <label htmlFor="is_pinned" className="text-sm text-gray-700">공지 고정</label>
+              <label htmlFor="is_pinned" className="text-sm text-gray-700">{t('notice.pinToggle')}</label>
             </div>
             <div className="flex-1">
               <select value={form.target_school_id} onChange={set('target_school_id')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                <option value="">전체 학교 대상</option>
+                <option value="">{t('common.allSchools')}</option>
                 {schools?.map(s => (
                   <option key={s.id} value={s.id}>{s.name_ko}</option>
                 ))}
@@ -256,11 +258,11 @@ export default function NoticeManager() {
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">
-              취소
+              {t('common.cancel')}
             </button>
             <button type="submit" disabled={upsertMutation.isPending}
               className="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
-              {upsertMutation.isPending ? '저장 중...' : editing ? '수정' : '등록'}
+              {upsertMutation.isPending ? t('common.saving') : editing ? t('common.edit') : t('notice.register')}
             </button>
           </div>
         </form>

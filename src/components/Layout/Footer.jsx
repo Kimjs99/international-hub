@@ -17,7 +17,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2 text-white font-bold text-lg mb-3">
             <GraduationCap className="w-6 h-6" />
-            국제교류 허브
+            {t('hubName')}
           </div>
           <p className="text-sm text-gray-400">{t('footer.description')}</p>
         </div>

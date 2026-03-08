@@ -1,10 +1,16 @@
 {
   "programs": {
     "title": "Cultural Programs",
-    "subtitle": "Korea–Japan cultural exchange program guide"
+    "subtitle": "Korea–Japan cultural exchange program guide",
+    "empty": "No cultural programs registered"
   },
   "archive": {
     "title": "Exchange Archive",
     "subtitle": "Collection of past exchange activity records"
+  },
+  "status": {
+    "upcoming": "Upcoming",
+    "ongoing": "Ongoing",
+    "ended": "Ended"
   }
 }

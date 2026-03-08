@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import { Calendar, MapPin, Globe } from 'lucide-react'
 import { format } from 'date-fns'
 import Badge from './Badge'
 
 export default function EventCard({ event, lang = 'ko', onClick }) {
+  const { t } = useTranslation()
   const title = lang === 'ko' ? event.title_ko : event.title_ja
   const location = lang === 'ko' ? event.location_ko : event.location_ja
 
@@ -15,7 +17,7 @@ export default function EventCard({ event, lang = 'ko', onClick }) {
         <Badge label={event.category} type={event.category} />
         {event.is_online && (
           <span className="text-xs text-blue-600 flex items-center gap-1">
-            <Globe className="w-3 h-3" /> 온라인
+            <Globe className="w-3 h-3" /> {t('label.online')}
           </span>
         )}
       </div>

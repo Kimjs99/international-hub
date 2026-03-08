@@ -15,6 +15,12 @@ export function LanguageProvider({ children }) {
   }
 
   useEffect(() => {
+    // i18n을 context lang에 맞춰 초기 동기화 (navigator 감지와의 불일치 방지)
+    i18n.changeLanguage(lang)
+    document.documentElement.lang = lang
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     document.documentElement.lang = lang
   }, [lang])
 

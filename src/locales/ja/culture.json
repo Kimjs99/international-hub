@@ -1,10 +1,16 @@
 {
   "programs": {
     "title": "文化プログラム",
-    "subtitle": "日韓文化交流プログラムのご案内"
+    "subtitle": "日韓文化交流プログラムのご案内",
+    "empty": "登録された文化プログラムはありません"
   },
   "archive": {
     "title": "交流記録",
     "subtitle": "過去の交流活動記録集"
+  },
+  "status": {
+    "upcoming": "予定",
+    "ongoing": "開催中",
+    "ended": "終了"
   }
 }

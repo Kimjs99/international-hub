@@ -42,7 +42,7 @@ export default function Navbar() {
           {/* 로고 */}
           <Link to="/" className="flex items-center gap-2 text-primary-700 font-bold text-lg">
             <GraduationCap className="w-7 h-7" />
-            <span className="hidden sm:inline">국제교류 허브</span>
+            <span className="hidden sm:inline">{t('hubName')}</span>
           </Link>
 
           {/* 데스크탑 메뉴 */}

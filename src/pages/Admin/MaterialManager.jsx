@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/UI/Spinner'
@@ -6,7 +7,6 @@ import Modal from '../../components/UI/Modal'
 import { Plus, Pencil, Trash2, Upload } from 'lucide-react'
 
 const CATEGORIES = ['curriculum', 'research', 'presentation', 'report', 'other']
-const CATEGORY_LABELS = { curriculum: '교육과정', research: '연구자료', presentation: '발표자료', report: '보고서', other: '기타' }
 const FILE_TYPES = ['pdf', 'pptx', 'docx']
 
 const ALLOWED_MIME = [
@@ -19,17 +19,8 @@ const EMPTY_FORM = {
   title_ko: '', title_ja: '', title_en: '', category: 'research', file_type: 'pdf', school_id: '',
 }
 
-const handleFileUpload = async (file) => {
-  if (!ALLOWED_MIME.includes(file.type)) throw new Error('허용되지 않는 파일 형식입니다. (PDF, PPTX, DOCX만 가능)')
-  if (file.size > 50 * 1024 * 1024) throw new Error('파일 크기는 50MB 이하여야 합니다.')
-  const path = `${Date.now()}_${file.name}`
-  const { error } = await supabase.storage.from('materials').upload(path, file)
-  if (error) throw error
-  const { data: { publicUrl } } = supabase.storage.from('materials').getPublicUrl(path)
-  return publicUrl
-}
-
 export default function MaterialManager() {
+  const { t } = useTranslation('admin')
   const qc = useQueryClient()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -37,6 +28,24 @@ export default function MaterialManager() {
   const [file, setFile] = useState(null)
   const [fileError, setFileError] = useState('')
   const [activeTab, setActiveTab] = useState('ko')
+
+  const CATEGORY_LABELS = {
+    curriculum: t('material.catCurriculum'),
+    research: t('material.catResearch'),
+    presentation: t('material.catPresentation'),
+    report: t('material.catReport'),
+    other: t('material.catOther'),
+  }
+
+  const handleFileUpload = async (uploadFile) => {
+    if (!ALLOWED_MIME.includes(uploadFile.type)) throw new Error(t('material.fileTypeError'))
+    if (uploadFile.size > 50 * 1024 * 1024) throw new Error(t('material.fileSizeError'))
+    const path = `${Date.now()}_${uploadFile.name}`
+    const { error } = await supabase.storage.from('materials').upload(path, uploadFile)
+    if (error) throw error
+    const { data: { publicUrl } } = supabase.storage.from('materials').getPublicUrl(path)
+    return publicUrl
+  }
 
   const { data: materials, isLoading } = useQuery({
     queryKey: ['admin', 'materials'],
@@ -123,7 +132,7 @@ export default function MaterialManager() {
   }
 
   const handleDelete = (material) => {
-    if (!window.confirm(`"${material.title_ko}" 자료를 삭제하시겠습니까?`)) return
+    if (!window.confirm(`"${material.title_ko}" ${t('material.confirmDelete')}`)) return
     deleteMutation.mutate(material.id)
   }
 
@@ -132,12 +141,12 @@ export default function MaterialManager() {
     setFileError('')
     if (!selected) { setFile(null); return }
     if (!ALLOWED_MIME.includes(selected.type)) {
-      setFileError('PDF, PPTX, DOCX 파일만 업로드할 수 있습니다.')
+      setFileError(t('material.fileTypeError'))
       setFile(null)
       return
     }
     if (selected.size > 50 * 1024 * 1024) {
-      setFileError('파일 크기는 50MB 이하여야 합니다.')
+      setFileError(t('material.fileSizeError'))
       setFile(null)
       return
     }
@@ -146,7 +155,7 @@ export default function MaterialManager() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!editing && !file) { setFileError('파일을 선택해주세요.'); return }
+    if (!editing && !file) { setFileError(t('material.fileRequired')); return }
     upsertMutation.mutate({ values: form, uploadFile: file })
   }
 
@@ -157,11 +166,11 @@ export default function MaterialManager() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">자료 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('material.title')}</h1>
         <button onClick={openAdd}
           className="flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
           <Plus className="w-4 h-4" />
-          자료 추가
+          {t('material.add')}
         </button>
       </div>
 
@@ -169,10 +178,10 @@ export default function MaterialManager() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">제목 (한)</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">카테고리</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">파일 형식</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">다운로드</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('material.colTitle')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('material.colCategory')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('material.colFileType')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('material.colDownloads')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -203,21 +212,21 @@ export default function MaterialManager() {
             ))}
             {materials?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">등록된 자료가 없습니다.</td>
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">{t('material.empty')}</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? '자료 수정' : '자료 추가'} size="lg">
+      <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? t('material.edit') : t('material.add')} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex border-b mb-3">
               {[
-                { id: 'ko', label: '🇰🇷 한국어' },
-                { id: 'ja', label: '🇯🇵 日本語' },
-                { id: 'en', label: '🇬🇧 English' },
+                { id: 'ko', label: t('common.tabKo') },
+                { id: 'ja', label: t('common.tabJa') },
+                { id: 'en', label: t('common.tabEn') },
               ].map(tab => (
                 <button key={tab.id} type="button"
                   onClick={() => setActiveTab(tab.id)}
@@ -230,21 +239,21 @@ export default function MaterialManager() {
             </div>
             {activeTab === 'ko' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('material.labelTitleKo')} *</label>
                 <input type="text" value={form.title_ko} onChange={set('title_ko')} required
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
             )}
             {activeTab === 'ja' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('material.labelTitleJa')}</label>
                 <input type="text" value={form.title_ja} onChange={set('title_ja')}
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
             )}
             {activeTab === 'en' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title (English)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('material.labelTitleEn')}</label>
                 <input type="text" value={form.title_en} onChange={set('title_en')}
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
@@ -252,7 +261,7 @@ export default function MaterialManager() {
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">카테고리 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('material.colCategory')} *</label>
               <select value={form.category} onChange={set('category')} required
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                 {CATEGORIES.map(c => (
@@ -261,19 +270,19 @@ export default function MaterialManager() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">파일 형식 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('material.colFileType')} *</label>
               <select value={form.file_type} onChange={set('file_type')} required
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                {FILE_TYPES.map(t => (
-                  <option key={t} value={t}>{t.toUpperCase()}</option>
+                {FILE_TYPES.map(ft => (
+                  <option key={ft} value={ft}>{ft.toUpperCase()}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">학교</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.school')}</label>
               <select value={form.school_id} onChange={set('school_id')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                <option value="">전체</option>
+                <option value="">{t('common.allSchools')}</option>
                 {schools?.map(s => (
                   <option key={s.id} value={s.id}>{s.name_ko}</option>
                 ))}
@@ -282,12 +291,12 @@ export default function MaterialManager() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              파일 업로드 {!editing && '*'}
+              {t('material.labelFile')} {!editing && '*'}
             </label>
             <label className="flex items-center gap-3 border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors">
               <Upload className="w-5 h-5 text-gray-400" />
               <span className="text-sm text-gray-500">
-                {file ? file.name : editing ? '새 파일 선택 (선택사항)' : 'PDF, PPTX, DOCX — 최대 50MB'}
+                {file ? file.name : editing ? t('material.fileOptional') : t('material.fileHint')}
               </span>
               <input type="file" accept=".pdf,.pptx,.docx" className="hidden" onChange={handleFileChange} />
             </label>
@@ -296,11 +305,11 @@ export default function MaterialManager() {
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">
-              취소
+              {t('common.cancel')}
             </button>
             <button type="submit" disabled={upsertMutation.isPending}
               className="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
-              {upsertMutation.isPending ? '업로드 중...' : editing ? '수정' : '추가'}
+              {upsertMutation.isPending ? t('common.uploading') : editing ? t('common.edit') : t('common.add')}
             </button>
           </div>
         </form>

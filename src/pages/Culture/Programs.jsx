@@ -15,10 +15,10 @@ function getEventStatus(startDate, endDate) {
   return 'ongoing'
 }
 
-const STATUS_BADGE = {
-  upcoming: { label: '예정', labelJa: '予定', type: 'academic' },
-  ongoing:  { label: '진행중', labelJa: '開催中', type: 'activity' },
-  finished: { label: '종료', labelJa: '終了', type: 'general' },
+const STATUS_BADGE_TYPE = {
+  upcoming: 'academic',
+  ongoing:  'activity',
+  finished: 'general',
 }
 
 export default function Programs() {
@@ -37,25 +37,24 @@ export default function Programs() {
       {isError && (
         <EmptyState
           icon={Calendar}
-          title={lang === 'ko' ? '데이터를 불러오지 못했습니다' : 'データの取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && events.length === 0 && (
         <EmptyState
           icon={Calendar}
-          title={lang === 'ko' ? '등록된 문화 프로그램이 없습니다' : '登録された文化プログラムはありません'}
+          title={t('programs.empty')}
         />
       )}
       {!isLoading && !isError && events.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map((event) => {
             const status = getEventStatus(event.start_date, event.end_date)
-            const badge = STATUS_BADGE[status]
-            const badgeLabel = lang === 'ko' ? badge.label : badge.labelJa
+            const statusKey = status === 'finished' ? 'ended' : status
             return (
               <div key={event.id} className="relative">
                 <div className="absolute top-3 right-3 z-10">
-                  <Badge label={badgeLabel} type={badge.type} />
+                  <Badge label={t(`status.${statusKey}`)} type={STATUS_BADGE_TYPE[status]} />
                 </div>
                 <EventCard event={event} lang={lang} />
               </div>

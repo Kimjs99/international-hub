@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/UI/Spinner'
@@ -9,26 +10,27 @@ const EMPTY_ALBUM_FORM = {
   title_ko: '', title_ja: '', title_en: '', taken_date: '', school_id: '', is_public: true,
 }
 
-const uploadPhotos = async (albumId, files) => {
-  const uploads = Array.from(files).map(async (file, i) => {
-    if (file.size > 5 * 1024 * 1024) throw new Error('이미지는 5MB 이하여야 합니다.')
-    const path = `${albumId}/${Date.now()}_${i}.${file.name.split('.').pop()}`
-    const { error } = await supabase.storage.from('gallery').upload(path, file)
-    if (error) throw error
-    const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(path)
-    return { album_id: albumId, photo_url: publicUrl, order_index: i }
-  })
-  const photos = await Promise.all(uploads)
-  await supabase.from('gallery_photos').insert(photos)
-}
-
 export default function GalleryManager() {
+  const { t } = useTranslation('admin')
   const qc = useQueryClient()
   const [selectedAlbum, setSelectedAlbum] = useState(null)
   const [albumModalOpen, setAlbumModalOpen] = useState(false)
   const [albumForm, setAlbumForm] = useState(EMPTY_ALBUM_FORM)
   const [uploadError, setUploadError] = useState('')
   const [activeTab, setActiveTab] = useState('ko')
+
+  const uploadPhotos = async (albumId, files) => {
+    const uploads = Array.from(files).map(async (file, i) => {
+      if (file.size > 5 * 1024 * 1024) throw new Error(t('gallery.photoSizeError'))
+      const path = `${albumId}/${Date.now()}_${i}.${file.name.split('.').pop()}`
+      const { error } = await supabase.storage.from('gallery').upload(path, file)
+      if (error) throw error
+      const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(path)
+      return { album_id: albumId, photo_url: publicUrl, order_index: i }
+    })
+    const photos = await Promise.all(uploads)
+    await supabase.from('gallery_photos').insert(photos)
+  }
 
   const { data: albums, isLoading: albumsLoading } = useQuery({
     queryKey: ['admin', 'gallery-albums'],
@@ -112,12 +114,12 @@ export default function GalleryManager() {
   }
 
   const handleDeleteAlbum = (album) => {
-    if (!window.confirm(`"${album.title_ko}" 앨범을 삭제하시겠습니까?`)) return
+    if (!window.confirm(`"${album.title_ko}" ${t('gallery.confirmDeleteAlbum')}`)) return
     deleteAlbumMutation.mutate(album.id)
   }
 
   const handleDeletePhoto = (photo) => {
-    if (!window.confirm('이 사진을 삭제하시겠습니까?')) return
+    if (!window.confirm(t('gallery.confirmDeletePhoto'))) return
     deletePhotoMutation.mutate(photo.id)
   }
 
@@ -147,14 +149,14 @@ export default function GalleryManager() {
           <label className="flex items-center gap-3 border-2 border-dashed rounded-xl p-6 cursor-pointer hover:bg-gray-50 transition-colors">
             <Upload className="w-6 h-6 text-gray-400" />
             <div>
-              <p className="text-sm font-medium text-gray-700">사진 업로드 (다중 선택 가능)</p>
-              <p className="text-xs text-gray-400 mt-0.5">이미지 파일 — 각 5MB 이하</p>
+              <p className="text-sm font-medium text-gray-700">{t('gallery.uploadPhotos')}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{t('gallery.uploadHint')}</p>
             </div>
             <input type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload}
               disabled={uploadMutation.isPending} />
           </label>
           {uploadError && <p className="mt-2 text-sm text-red-600">{uploadError}</p>}
-          {uploadMutation.isPending && <p className="mt-2 text-sm text-primary-600">업로드 중...</p>}
+          {uploadMutation.isPending && <p className="mt-2 text-sm text-primary-600">{t('common.uploading')}</p>}
         </div>
 
         {photosLoading ? (
@@ -175,7 +177,7 @@ export default function GalleryManager() {
             {photos?.length === 0 && (
               <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
                 <Image className="w-12 h-12 mb-2" />
-                <p className="text-sm">사진이 없습니다. 업로드해주세요.</p>
+                <p className="text-sm">{t('gallery.noPhotos')}</p>
               </div>
             )}
           </div>
@@ -189,11 +191,11 @@ export default function GalleryManager() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">사진 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('gallery.title')}</h1>
         <button onClick={() => setAlbumModalOpen(true)}
           className="flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
           <Plus className="w-4 h-4" />
-          앨범 생성
+          {t('gallery.addAlbum')}
         </button>
       </div>
 
@@ -201,10 +203,10 @@ export default function GalleryManager() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">앨범 제목 (한)</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">촬영일</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">학교</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">공개</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('gallery.colTitle')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('gallery.colDate')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('gallery.colSchool')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('gallery.colPublic')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -218,7 +220,7 @@ export default function GalleryManager() {
                   <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                     album.is_public ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
                   }`}>
-                    {album.is_public ? '공개' : '비공개'}
+                    {album.is_public ? t('common.public') : t('common.private')}
                   </span>
                 </td>
                 <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -233,7 +235,7 @@ export default function GalleryManager() {
             ))}
             {albums?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">등록된 앨범이 없습니다.</td>
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">{t('gallery.empty')}</td>
               </tr>
             )}
           </tbody>
@@ -241,14 +243,14 @@ export default function GalleryManager() {
       </div>
 
       <Modal isOpen={albumModalOpen} onClose={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko') }}
-        title="앨범 생성">
+        title={t('gallery.createAlbum')}>
         <form onSubmit={handleAlbumSubmit} className="space-y-4">
           <div>
             <div className="flex border-b mb-3">
               {[
-                { id: 'ko', label: '🇰🇷 한국어' },
-                { id: 'ja', label: '🇯🇵 日本語' },
-                { id: 'en', label: '🇬🇧 English' },
+                { id: 'ko', label: t('common.tabKo') },
+                { id: 'ja', label: t('common.tabJa') },
+                { id: 'en', label: t('common.tabEn') },
               ].map(tab => (
                 <button key={tab.id} type="button"
                   onClick={() => setActiveTab(tab.id)}
@@ -261,21 +263,21 @@ export default function GalleryManager() {
             </div>
             {activeTab === 'ko' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">앨범 제목 (한국어) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('gallery.labelTitleKo')} *</label>
                 <input type="text" value={albumForm.title_ko} onChange={setAlbum('title_ko')} required
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
             )}
             {activeTab === 'ja' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">앨범 제목 (일본어)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('gallery.labelTitleJa')}</label>
                 <input type="text" value={albumForm.title_ja} onChange={setAlbum('title_ja')}
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
             )}
             {activeTab === 'en' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Album Title (English)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('gallery.labelTitleEn')}</label>
                 <input type="text" value={albumForm.title_en} onChange={setAlbum('title_en')}
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
@@ -283,15 +285,15 @@ export default function GalleryManager() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">촬영일</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('gallery.labelDate')}</label>
               <input type="date" value={albumForm.taken_date} onChange={setAlbum('taken_date')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">학교</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.school')}</label>
               <select value={albumForm.school_id} onChange={setAlbum('school_id')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                <option value="">전체</option>
+                <option value="">{t('common.all')}</option>
                 {schools?.map(s => (
                   <option key={s.id} value={s.id}>{s.name_ko}</option>
                 ))}
@@ -301,16 +303,16 @@ export default function GalleryManager() {
           <div className="flex items-center gap-2">
             <input type="checkbox" id="is_public" checked={albumForm.is_public} onChange={setAlbumCheck('is_public')}
               className="w-4 h-4 rounded border-gray-300 text-primary-500" />
-            <label htmlFor="is_public" className="text-sm text-gray-700">공개 앨범</label>
+            <label htmlFor="is_public" className="text-sm text-gray-700">{t('gallery.labelPublic')}</label>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko') }}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">
-              취소
+              {t('common.cancel')}
             </button>
             <button type="submit" disabled={createAlbumMutation.isPending}
               className="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
-              {createAlbumMutation.isPending ? '생성 중...' : '앨범 생성'}
+              {createAlbumMutation.isPending ? t('common.saving') : t('gallery.createAlbum')}
             </button>
           </div>
         </form>

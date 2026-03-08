@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/UI/Spinner'
 import { School, Calendar, FileText, Image } from 'lucide-react'
 
 export default function AdminDashboard() {
+  const { t } = useTranslation('admin')
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin', 'stats'],
     queryFn: async () => {
@@ -23,17 +25,17 @@ export default function AdminDashboard() {
   })
 
   const STAT_CARDS = [
-    { label: '참여 학교', key: 'schools', icon: School, color: 'text-blue-600 bg-blue-50' },
-    { label: '행사', key: 'events', icon: Calendar, color: 'text-purple-600 bg-purple-50' },
-    { label: '자료', key: 'materials', icon: FileText, color: 'text-green-600 bg-green-50' },
-    { label: '사진', key: 'photos', icon: Image, color: 'text-amber-600 bg-amber-50' },
+    { label: t('dashboard.schools'), key: 'schools', icon: School, color: 'text-blue-600 bg-blue-50' },
+    { label: t('dashboard.events'), key: 'events', icon: Calendar, color: 'text-purple-600 bg-purple-50' },
+    { label: t('dashboard.materials'), key: 'materials', icon: FileText, color: 'text-green-600 bg-green-50' },
+    { label: t('dashboard.photos'), key: 'photos', icon: Image, color: 'text-amber-600 bg-amber-50' },
   ]
 
   if (isLoading) return <Spinner className="py-20" />
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">대시보드</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">{t('dashboard.title')}</h1>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {STAT_CARDS.map(card => {
           const Icon = card.icon

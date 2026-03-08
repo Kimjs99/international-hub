@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, isSameMonth, isSameDay } from 'date-fns'
 import clsx from 'clsx'
@@ -11,6 +12,7 @@ const CATEGORY_COLORS = {
 }
 
 export default function Calendar({ events = [], lang = 'ko', onEventClick }) {
+  const { t } = useTranslation()
   const [current, setCurrent] = useState(new Date())
 
   const monthStart = startOfMonth(current)
@@ -28,7 +30,11 @@ export default function Calendar({ events = [], lang = 'ko', onEventClick }) {
   const getEventsForDay = (d) =>
     events.filter(e => isSameDay(new Date(e.start_date), d))
 
-  const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
+  const WEEKDAYS = lang === 'ja'
+    ? ['日', '月', '火', '水', '木', '金', '土']
+    : lang === 'en'
+    ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    : ['일', '월', '화', '수', '목', '금', '토']
 
   return (
     <div className="bg-white rounded-xl border overflow-hidden">
@@ -37,7 +43,7 @@ export default function Calendar({ events = [], lang = 'ko', onEventClick }) {
           <ChevronLeft className="w-5 h-5" />
         </button>
         <span className="font-semibold text-gray-800">
-          {format(current, lang === 'ko' ? 'yyyy년 M월' : 'yyyy年M月')}
+          {format(current, lang === 'en' ? 'MMMM yyyy' : lang === 'ja' ? 'yyyy年M月' : 'yyyy년 M월')}
         </span>
         <button onClick={() => setCurrent(addMonths(current, 1))} className="p-1 hover:bg-gray-100 rounded">
           <ChevronRight className="w-5 h-5" />
@@ -45,7 +51,7 @@ export default function Calendar({ events = [], lang = 'ko', onEventClick }) {
       </div>
 
       <div className="grid grid-cols-7">
-        {DAY_LABELS.map(label => (
+        {WEEKDAYS.map(label => (
           <div key={label} className="py-2 text-center text-xs font-medium text-gray-500">{label}</div>
         ))}
         {days.map((d, i) => {
@@ -76,7 +82,7 @@ export default function Calendar({ events = [], lang = 'ko', onEventClick }) {
                       CATEGORY_COLORS[e.category] ?? CATEGORY_COLORS.general
                     )}
                   >
-                    {lang === 'ko' ? e.title_ko : e.title_ja}
+                    {lang === 'ja' ? e.title_ja : lang === 'en' ? (e.title_en ?? e.title_ko) : e.title_ko}
                   </button>
                 ))}
                 {dayEvents.length > 2 && (
@@ -92,10 +98,7 @@ export default function Calendar({ events = [], lang = 'ko', onEventClick }) {
         {Object.entries(CATEGORY_COLORS).map(([cat, color]) => (
           <span key={cat} className="flex items-center gap-1">
             <span className={`w-2.5 h-2.5 rounded-full ${color}`} />
-            {lang === 'ko'
-              ? { academic: '학술', culture: '문화', activity: '활동', general: '일반' }[cat]
-              : { academic: '学術', culture: '文化', activity: '活動', general: '一般' }[cat]
-            }
+            {t(`category.${cat}`)}
           </span>
         ))}
       </div>

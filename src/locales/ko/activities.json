@@ -12,6 +12,10 @@
   },
   "events": {
     "title": "행사 일정",
-    "subtitle": "한·일 교류 행사 일정 안내"
+    "subtitle": "한·일 교류 행사 일정 안내",
+    "upcoming": "예정 행사",
+    "past": "지난 행사",
+    "emptyUpcoming": "예정된 행사가 없습니다",
+    "emptyPast": "지난 행사가 없습니다"
   }
 }

@@ -12,6 +12,10 @@
   },
   "events": {
     "title": "行事日程",
-    "subtitle": "日韓交流行事スケジュールのご案内"
+    "subtitle": "日韓交流行事スケジュールのご案内",
+    "upcoming": "予定行事",
+    "past": "過去の行事",
+    "emptyUpcoming": "予定されている行事はありません",
+    "emptyPast": "過去の行事はありません"
   }
 }

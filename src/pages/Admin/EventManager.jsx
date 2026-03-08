@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/UI/Spinner'
@@ -6,7 +7,6 @@ import Modal from '../../components/UI/Modal'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 
 const CATEGORIES = ['academic', 'culture', 'activity', 'general']
-const CATEGORY_LABELS = { academic: '학술', culture: '문화', activity: '활동', general: '일반' }
 
 const EMPTY_FORM = {
   title_ko: '', title_ja: '', title_en: '', category: 'academic',
@@ -15,11 +15,19 @@ const EMPTY_FORM = {
 }
 
 export default function EventManager() {
+  const { t } = useTranslation('admin')
   const qc = useQueryClient()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const [activeTab, setActiveTab] = useState('ko')
+
+  const CATEGORY_LABELS = {
+    academic: t('event.catAcademic'),
+    culture: t('event.catCulture'),
+    activity: t('event.catActivity'),
+    general: t('event.catGeneral'),
+  }
 
   const { data: events, isLoading } = useQuery({
     queryKey: ['admin', 'events'],
@@ -101,7 +109,7 @@ export default function EventManager() {
   }
 
   const handleDelete = (event) => {
-    if (!window.confirm(`"${event.title_ko}" 행사를 삭제하시겠습니까?`)) return
+    if (!window.confirm(`"${event.title_ko}" ${t('event.confirmDelete')}`)) return
     deleteMutation.mutate(event.id)
   }
 
@@ -118,11 +126,11 @@ export default function EventManager() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">행사 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('event.title')}</h1>
         <button onClick={openAdd}
           className="flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
           <Plus className="w-4 h-4" />
-          행사 추가
+          {t('event.add')}
         </button>
       </div>
 
@@ -130,10 +138,10 @@ export default function EventManager() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">제목 (한)</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">카테고리</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">시작일</th>
-              <th className="text-left px-4 py-3 text-gray-600 font-medium">학교</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('event.colTitle')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('event.colCategory')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('event.colStartDate')}</th>
+              <th className="text-left px-4 py-3 text-gray-600 font-medium">{t('event.colSchool')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -164,21 +172,21 @@ export default function EventManager() {
             ))}
             {events?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">등록된 행사가 없습니다.</td>
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">{t('event.empty')}</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? '행사 수정' : '행사 추가'} size="lg">
+      <Modal isOpen={modalOpen} onClose={closeModal} title={editing ? t('event.edit') : t('event.add')} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex border-b mb-3">
               {[
-                { id: 'ko', label: '🇰🇷 한국어' },
-                { id: 'ja', label: '🇯🇵 日本語' },
-                { id: 'en', label: '🇬🇧 English' },
+                { id: 'ko', label: t('common.tabKo') },
+                { id: 'ja', label: t('common.tabJa') },
+                { id: 'en', label: t('common.tabEn') },
               ].map(tab => (
                 <button key={tab.id} type="button"
                   onClick={() => setActiveTab(tab.id)}
@@ -192,12 +200,12 @@ export default function EventManager() {
             {activeTab === 'ko' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (한국어) *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelTitleKo')} *</label>
                   <input type="text" value={form.title_ko} onChange={set('title_ko')} required
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">장소 (한국어)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelLocationKo')}</label>
                   <input type="text" value={form.location_ko} onChange={set('location_ko')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
@@ -206,12 +214,12 @@ export default function EventManager() {
             {activeTab === 'ja' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">제목 (일본어)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelTitleJa')}</label>
                   <input type="text" value={form.title_ja} onChange={set('title_ja')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">장소 (일본어)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelLocationJa')}</label>
                   <input type="text" value={form.location_ja} onChange={set('location_ja')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
@@ -220,12 +228,12 @@ export default function EventManager() {
             {activeTab === 'en' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title (English)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelTitleEn')}</label>
                   <input type="text" value={form.title_en} onChange={set('title_en')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location (English)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelLocationEn')}</label>
                   <input type="text" value={form.location_en} onChange={set('location_en')}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
@@ -234,7 +242,7 @@ export default function EventManager() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">카테고리 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.colCategory')} *</label>
               <select value={form.category} onChange={set('category')} required
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                 {CATEGORIES.map(c => (
@@ -243,10 +251,10 @@ export default function EventManager() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">학교</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.colSchool')}</label>
               <select value={form.school_id} onChange={set('school_id')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                <option value="">전체</option>
+                <option value="">{t('common.all')}</option>
                 {schools?.map(s => (
                   <option key={s.id} value={s.id}>{s.name_ko}</option>
                 ))}
@@ -255,12 +263,12 @@ export default function EventManager() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">시작일 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelStartDate')} *</label>
               <input type="date" value={form.start_date} onChange={set('start_date')} required
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">종료일</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('event.labelEndDate')}</label>
               <input type="date" value={form.end_date} onChange={set('end_date')}
                 className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
             </div>
@@ -268,16 +276,16 @@ export default function EventManager() {
           <div className="flex items-center gap-2">
             <input type="checkbox" id="is_online" checked={form.is_online} onChange={setCheck('is_online')}
               className="w-4 h-4 rounded border-gray-300 text-primary-500" />
-            <label htmlFor="is_online" className="text-sm text-gray-700">온라인 행사</label>
+            <label htmlFor="is_online" className="text-sm text-gray-700">{t('event.labelOnline')}</label>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">
-              취소
+              {t('common.cancel')}
             </button>
             <button type="submit" disabled={upsertMutation.isPending}
               className="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
-              {upsertMutation.isPending ? '저장 중...' : editing ? '수정' : '추가'}
+              {upsertMutation.isPending ? t('common.saving') : editing ? t('common.edit') : t('common.add')}
             </button>
           </div>
         </form>
