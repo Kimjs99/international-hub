@@ -10,30 +10,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-bun run dev      # Vite 개발 서버 (http://localhost:5173)
-bun run build    # 프로덕션 빌드
-bun run lint     # ESLint 실행
-bun run preview  # 빌드 미리보기
+# 개발 서버 — bun run dev는 esbuild EPIPE 오류 발생. node로 직접 실행해야 함
+node node_modules/.bin/vite          # 개발 서버 (http://localhost:5173)
+bun run build                        # 프로덕션 빌드
+bun run lint                         # ESLint 실행
+bun run preview                      # 빌드 미리보기
 ```
 
 ## Tech Stack
 
 - React 19 + Vite 7, TailwindCSS v3
-- React Router v7, TanStack Query v5
-- i18next + react-i18next + i18next-browser-languagedetector
-- Supabase JS Client, lucide-react, clsx, date-fns
+- React Router v7 (nested routes), TanStack Query v5
+- i18next + react-i18next + i18next-browser-languagedetector + i18next-http-backend
+- Supabase JS Client, react-helmet-async, lucide-react, clsx, date-fns
 
 ## Architecture
 
 ### Provider 계층 (`src/main.jsx`)
 
 ```
-QueryClientProvider → AuthProvider → LanguageProvider → App
+HelmetProvider → QueryClientProvider → AuthProvider → LanguageProvider → App
 ```
 
 ### Routing (`src/App.jsx`)
 
-모든 페이지는 `PageLayout`(Navbar + Footer) 아래 중첩. `/admin/*`만 별도.
+모든 페이지는 React.lazy + Suspense로 코드 스플리팅. 구조:
+- `<PageLayout>` (Navbar + Footer) 아래 일반 페이지 중첩
+- `/login` — PageLayout 밖 독립 라우트
+- `/admin/*` — `<AdminLayout>` (인증 가드 + 사이드바) 아래 중첩
 
 ### Context
 
@@ -52,12 +56,25 @@ QueryClientProvider → AuthProvider → LanguageProvider → App
 
 ### Data Fetching (`src/hooks/`)
 
-TanStack Query 훅. `useSchools`, `useSchool(id)`, `useEvents({ category, schoolId })`, `useEvent(id)`, `useNotices({ schoolId })`, `useNotice(id)` — 모두 `supabase` 클라이언트 직접 호출.
+TanStack Query 훅. 모두 `supabase` 클라이언트 직접 호출:
+- `useSchools()`, `useSchool(id)`
+- `useEvents({ category, schoolId })`, `useEvent(id)`
+- `useNotices({ schoolId })`, `useNotice(id)`
+- `useMaterials({ category, schoolId, search })`
+- `useClubs({ category, schoolId })`
+- `useAlbums({ schoolId })`, `useAlbumPhotos(albumId)`
 
 ### UI Components (`src/components/UI/`)
 
-재사용 컴포넌트. `lang` prop으로 `'ko'|'ja'`를 받는 것들: `EventCard`, `FileCard`, `PhotoGrid`, `LightboxViewer`, `Calendar`.
-`Calendar`는 events 배열을 받아 월간 뷰 렌더링 (카테고리 색상: academic=blue, culture=purple, activity=green, general=gray).
+`lang` prop(`'ko'|'ja'`)을 받는 컴포넌트: `EventCard`, `FileCard`, `PhotoGrid`, `LightboxViewer`, `Calendar`.
+- `Calendar`: events 배열 → 월간 뷰 (카테고리 색상: academic=blue, culture=purple, activity=green, general=gray)
+- `PhotoGrid`: 사진 그리드 + `LightboxViewer` 내장 (터치 스와이프, 키보드 내비게이션)
+- `Modal`: `role="dialog"`, `aria-modal`, `aria-labelledby` 포함
+
+### Admin (`/admin/*`)
+
+`AdminLayout`이 인증 체크 (`user` 없으면 `/login` 리디렉션). 사이드바: `AdminSidebar`.
+관리 페이지: Dashboard, SchoolManager, EventManager, MaterialManager, GalleryManager, NoticeManager, MemberManager — 모두 Supabase CRUD + Modal 폼.
 
 ### Design Tokens (`tailwind.config.js`)
 
@@ -80,5 +97,5 @@ VITE_SUPABASE_ANON_KEY=
 
 ## Current Status
 
-WF-01~04 완료. 모든 페이지 컴포넌트는 아직 플레이스홀더 상태.
-다음 단계: WF-05~11 페이지 구현 (병렬 진행 가능) → WF-12~14 관리자·최적화·배포.
+WF-01~13 완료. 모든 페이지 구현 및 최적화(코드 스플리팅, a11y, SEO) 완료.
+다음 단계: WF-14 Vercel 배포 (Supabase CORS 설정은 배포 URL 확정 후).

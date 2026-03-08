@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.2.0] - 2026-03-08
+
+### ✨ Features
+- WF-13 반응형 최적화 및 접근성 / SEO — LightboxViewer 터치 스와이프, Modal a11y(role/aria), react-helmet-async, React.lazy + Suspense 코드 스플리팅 (c757522)
+- WF-12 관리자 기능 구현 — AdminLayout(인증 가드), AdminSidebar, Dashboard, SchoolManager, EventManager, MaterialManager, GalleryManager, NoticeManager, MemberManager, Login 페이지 (be45779)
+- WF-08~11 문화교류·동아리·행사·사진첩·공지사항 구현 — Programs, Archive, Clubs, Events, GalleryMain, AlbumDetail, NoticeList(Realtime), NoticeDetail (b8de7ed)
+- WF-05~07 홈·학교소개·학술교류 구현 — HeroBanner(자동 캐러셀), AnnouncementBar, QuickMenu, UpcomingEvents, SchoolHighlight, SchoolList, SchoolDetail, Schedule(캘린더), Materials (4139583)
+
+### 📝 Documentation
+- CLAUDE.md WF-04 완료 기준으로 업데이트 (f030e50)
+
 ## [v0.1.0] - 2026-03-08
 
 ### ✨ Features
