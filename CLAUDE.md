@@ -20,8 +20,8 @@ bun run preview                      # 빌드 미리보기
 ## Tech Stack
 
 - React 19 + Vite 7, TailwindCSS v3
-- React Router v7 (nested routes), TanStack Query v5
-- i18next + react-i18next + i18next-browser-languagedetector + i18next-http-backend
+- React Router v7 (nested routes), TanStack Query v5 (staleTime: 5분, retry: 1)
+- i18next + react-i18next + i18next-browser-languagedetector
 - Supabase JS Client, react-helmet-async, lucide-react, clsx, date-fns
 
 ## Architecture
@@ -34,7 +34,7 @@ HelmetProvider → QueryClientProvider → AuthProvider → LanguageProvider →
 
 ### Routing (`src/App.jsx`)
 
-모든 페이지는 React.lazy + Suspense로 코드 스플리팅. 구조:
+모든 페이지는 `React.lazy + Suspense`로 코드 스플리팅. 구조:
 - `<PageLayout>` (Navbar + Footer) 아래 일반 페이지 중첩
 - `/login` — PageLayout 밖 독립 라우트
 - `/admin/*` — `<AdminLayout>` (인증 가드 + 사이드바) 아래 중첩
@@ -44,19 +44,23 @@ HelmetProvider → QueryClientProvider → AuthProvider → LanguageProvider →
 | Context | 파일 | 제공값 |
 |---------|------|--------|
 | AuthContext | `src/context/AuthContext.jsx` | `user`, `role`, `loading`, `signIn`, `signOut` |
-| LanguageContext | `src/context/LanguageContext.jsx` | `lang`, `switchLanguage` — `html[lang]` 및 localStorage `language` 키 동기화 |
+| LanguageContext | `src/context/LanguageContext.jsx` | `lang`, `switchLanguage` |
+
+- `role`은 현재 항상 `'guest'`로 고정 (미구현). 향후 `user_school_roles` 테이블과 연동 예정.
+- `switchLanguage`는 i18n 언어 변경 + `localStorage('language')` + `html[lang]` 속성을 동시에 갱신.
+- 폰트는 CSS에서 `html[lang='ja']`일 때 Noto Sans JP로 자동 전환.
 
 ### i18n (`src/lib/i18n.js`)
 
+- 번역 파일은 **빌드 시 JS 번들에 정적으로 포함** (`src/locales/ko/`, `src/locales/ja/`). HTTP fetch 방식이 아님.
 - 네임스페이스: `common`(기본), `home`, `schools`, `academic`, `culture`, `activities`, `gallery`, `notices`
-- 번역 파일: `src/locales/ko/`, `src/locales/ja/`
-- 언어 감지 순서: `localStorage('language')` → 브라우저
+- 언어 감지 순서: `localStorage('language')` → 브라우저 언어
 - 컴포넌트에서 `useTranslation()` 또는 `useLanguage()` 사용
-- Supabase 다국어 필드는 `_ko`/`_ja` suffix 패턴 (예: `title_ko`, `title_ja`)
+- Supabase DB 다국어 필드는 `_ko`/`_ja` suffix 패턴 (예: `title_ko`, `title_ja`)
 
 ### Data Fetching (`src/hooks/`)
 
-TanStack Query 훅. 모두 `supabase` 클라이언트 직접 호출:
+TanStack Query 훅. 모두 `supabase` 클라이언트를 직접 호출:
 - `useSchools()`, `useSchool(id)`
 - `useEvents({ category, schoolId })`, `useEvent(id)`
 - `useNotices({ schoolId })`, `useNotice(id)`
@@ -95,7 +99,15 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 ```
 
+## Deployment (Vercel)
+
+- 프로젝트: `jsmajs-9184s-projects/international-hub`
+- Production URL: https://international-hub.vercel.app
+- `vercel.json`에 SPA 리라이트 규칙 포함 (locales/assets 경로는 제외)
+- 배포 명령: `vercel --prod` (international-hub 디렉토리에서 실행)
+- 환경변수는 Vercel 대시보드 또는 `vercel env add`로 설정
+
 ## Current Status
 
-WF-01~13 완료. 모든 페이지 구현 및 최적화(코드 스플리팅, a11y, SEO) 완료.
-다음 단계: WF-14 Vercel 배포 (Supabase CORS 설정은 배포 URL 확정 후).
+WF-01~14 완료. 모든 페이지 구현, 최적화(코드 스플리팅, a11y, SEO), Vercel 배포 완료.
+미구현: `role` 기반 권한 제어 (현재 관리자 접근은 로그인 여부만 체크).
