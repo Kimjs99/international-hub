@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { ChevronLeft, Bell } from 'lucide-react'
 import { format } from 'date-fns'
 import { useNotice } from '../../hooks/useNotices'
@@ -10,13 +11,13 @@ import EmptyState from '../../components/UI/EmptyState'
 export default function NoticeDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { t, i18n } = useTranslation('notices')
-  const lang = i18n.language
+  const { t } = useTranslation('notices')
+  const { lang } = useLanguage()
 
   const { data: notice, isLoading, isError } = useNotice(id)
 
   const schoolName = notice?.schools
-    ? (lang === 'ko' ? notice.schools.name_ko : notice.schools.name_ja)
+    ? (lang === 'ja' ? (notice.schools.name_ja || notice.schools.name_ko) : lang === 'en' ? (notice.schools.name_en || notice.schools.name_ko) : notice.schools.name_ko)
     : null
 
   return (
@@ -54,7 +55,7 @@ export default function NoticeDetail() {
               {schoolName && <SchoolBadge name={schoolName} />}
             </div>
             <h1 className="text-2xl font-bold text-gray-900">
-              {lang === 'ko' ? notice.title_ko : notice.title_ja}
+              {lang === 'ja' ? (notice.title_ja || notice.title_ko) : lang === 'en' ? (notice.title_en || notice.title_ko) : notice.title_ko}
             </h1>
             <p className="mt-2 text-sm text-gray-400">
               {format(new Date(notice.created_at), lang === 'en' ? 'MMM dd, yyyy' : lang === 'ja' ? 'yyyy年MM月dd日' : 'yyyy년 MM월 dd일')}
@@ -63,7 +64,7 @@ export default function NoticeDetail() {
 
           <div className="border-t border-gray-100 pt-6">
             <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {lang === 'ko' ? notice.content_ko : notice.content_ja}
+              {lang === 'ja' ? (notice.content_ja || notice.content_ko) : lang === 'en' ? (notice.content_en || notice.content_ko) : notice.content_ko}
             </div>
           </div>
         </article>

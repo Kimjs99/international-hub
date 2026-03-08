@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { useSchools } from '../../hooks/useSchools'
 import Spinner from '../../components/UI/Spinner'
 import EmptyState from '../../components/UI/EmptyState'
@@ -12,8 +13,8 @@ const FILTERS = [
 ]
 
 export default function SchoolList() {
-  const { t, i18n } = useTranslation('schools')
-  const lang = i18n.language
+  const { t } = useTranslation('schools')
+  const { lang } = useLanguage()
   const [filter, setFilter] = useState('all')
 
   const { data: schools, isLoading } = useSchools()
@@ -77,16 +78,16 @@ export default function SchoolList() {
                 )}
                 <div>
                   <h2 className="font-semibold text-gray-900">
-                    {lang === 'ko' ? s.name_ko : s.name_ja}
+                    {lang === 'ja' ? (s.name_ja || s.name_ko) : lang === 'en' ? (s.name_en || s.name_ko) : s.name_ko}
                   </h2>
                   <p className="text-sm text-gray-500">{s.city}</p>
                 </div>
               </div>
 
               {/* Description */}
-              {(lang === 'ko' ? s.description_ko : s.description_ja) && (
+              {(lang === 'ja' ? (s.description_ja || s.description_ko) : lang === 'en' ? (s.description_en || s.description_ko) : s.description_ko) && (
                 <p className="text-sm text-gray-600 line-clamp-2 flex-1">
-                  {lang === 'ko' ? s.description_ko : s.description_ja}
+                  {lang === 'ja' ? (s.description_ja || s.description_ko) : lang === 'en' ? (s.description_en || s.description_ko) : s.description_ko}
                 </p>
               )}
 

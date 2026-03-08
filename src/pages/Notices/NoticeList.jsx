@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { useQueryClient } from '@tanstack/react-query'
 import { Pin, Bell } from 'lucide-react'
 import { format } from 'date-fns'
@@ -12,8 +13,8 @@ import Spinner from '../../components/UI/Spinner'
 import EmptyState from '../../components/UI/EmptyState'
 
 export default function NoticeList() {
-  const { t, i18n } = useTranslation('notices')
-  const lang = i18n.language
+  const { t } = useTranslation('notices')
+  const { lang } = useLanguage()
   const queryClient = useQueryClient()
   const [selectedSchool, setSelectedSchool] = useState(null)
 
@@ -39,7 +40,7 @@ export default function NoticeList() {
 
   function schoolName(notice) {
     if (!notice.schools) return null
-    return lang === 'ko' ? notice.schools.name_ko : notice.schools.name_ja
+    return lang === 'ja' ? (notice.schools.name_ja || notice.schools.name_ko) : lang === 'en' ? (notice.schools.name_en || notice.schools.name_ko) : notice.schools.name_ko
   }
 
   function NoticeRow({ notice, highlight = false }) {
@@ -63,7 +64,7 @@ export default function NoticeList() {
             )}
           </div>
           <p className={`font-medium truncate ${highlight ? 'text-red-900' : 'text-gray-900'}`}>
-            {lang === 'ko' ? notice.title_ko : notice.title_ja}
+            {lang === 'ja' ? (notice.title_ja || notice.title_ko) : lang === 'en' ? (notice.title_en || notice.title_ko) : notice.title_ko}
           </p>
           <p className="text-xs text-gray-400 mt-1">
             {format(new Date(notice.created_at), 'yyyy.MM.dd')}
@@ -90,7 +91,7 @@ export default function NoticeList() {
                 : 'bg-white text-gray-600 border-gray-300 hover:border-primary-400'
             }`}
           >
-            {lang === 'ko' ? '전체' : 'すべて'}
+            {t('label.all', { ns: 'common' })}
           </button>
           {schools.map((school) => (
             <button
@@ -102,7 +103,7 @@ export default function NoticeList() {
                   : 'bg-white text-gray-600 border-gray-300 hover:border-primary-400'
               }`}
             >
-              {lang === 'ko' ? school.name_ko : school.name_ja}
+              {lang === 'ja' ? (school.name_ja || school.name_ko) : lang === 'en' ? (school.name_en || school.name_ko) : school.name_ko}
             </button>
           ))}
         </div>
@@ -112,13 +113,13 @@ export default function NoticeList() {
       {isError && (
         <EmptyState
           icon={Bell}
-          title={lang === 'ko' ? '데이터를 불러오지 못했습니다' : 'データの取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && notices.length === 0 && (
         <EmptyState
           icon={Bell}
-          title={lang === 'ko' ? '공지사항이 없습니다' : 'お知らせはありません'}
+          title={t('status.empty', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && notices.length > 0 && (

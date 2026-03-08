@@ -2,6 +2,11 @@
   "schedule": {
     "title": "Shared Schedule",
     "subtitle": "Academic event schedule for Korea–Japan participating schools",
+    "viewCalendar": "Calendar",
+    "viewList": "List",
+    "period": "Period",
+    "location": "Location",
+    "content": "Content",
     "legend": {
       "academic": "Academic",
       "culture": "Culture",

@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { ChevronLeft, Image } from 'lucide-react'
 import { useAlbumPhotos } from '../../hooks/useGallery'
 import { useQuery } from '@tanstack/react-query'
@@ -27,8 +28,8 @@ function useAlbum(albumId) {
 export default function AlbumDetail() {
   const { albumId } = useParams()
   const navigate = useNavigate()
-  const { t, i18n } = useTranslation('gallery')
-  const lang = i18n.language
+  const { t } = useTranslation('gallery')
+  const { lang } = useLanguage()
 
   const { data: album, isLoading: albumLoading } = useAlbum(albumId)
   const { data: photos = [], isLoading: photosLoading, isError } = useAlbumPhotos(albumId)
@@ -48,7 +49,7 @@ export default function AlbumDetail() {
       {album && (
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {lang === 'ko' ? album.title_ko : album.title_ja}
+            {lang === 'ja' ? (album.title_ja || album.title_ko) : lang === 'en' ? (album.title_en || album.title_ko) : album.title_ko}
           </h1>
           {album.taken_date && (
             <p className="mt-2 text-gray-500">{album.taken_date}</p>
@@ -65,13 +66,13 @@ export default function AlbumDetail() {
       {isError && (
         <EmptyState
           icon={Image}
-          title={lang === 'ko' ? '사진을 불러오지 못했습니다' : '写真の取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && photos.length === 0 && (
         <EmptyState
           icon={Image}
-          title={lang === 'ko' ? '등록된 사진이 없습니다' : '登録された写真はありません'}
+          title={t('status.empty', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && photos.length > 0 && (

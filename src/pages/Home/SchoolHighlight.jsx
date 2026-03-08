@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/UI/Spinner'
 
 export default function SchoolHighlight() {
-  const { t, i18n } = useTranslation()
-  const lang = i18n.language
+  const { t } = useTranslation()
+  const { lang } = useLanguage()
 
   const { data: schools, isLoading } = useQuery({
     queryKey: ['schools', 'highlight'],
@@ -51,7 +52,7 @@ export default function SchoolHighlight() {
                 </div>
               )}
               <h3 className="font-semibold text-gray-900 text-sm">
-                {lang === 'ko' ? s.name_ko : s.name_ja}
+                {lang === 'ja' ? (s.name_ja || s.name_ko) : lang === 'en' ? (s.name_en || s.name_ko) : s.name_ko}
               </h3>
               <p className="text-xs text-gray-500 mt-1">{s.city}</p>
             </Link>

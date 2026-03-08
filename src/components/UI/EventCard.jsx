@@ -5,8 +5,8 @@ import Badge from './Badge'
 
 export default function EventCard({ event, lang = 'ko', onClick }) {
   const { t } = useTranslation()
-  const title = lang === 'ko' ? event.title_ko : event.title_ja
-  const location = lang === 'ko' ? event.location_ko : event.location_ja
+  const title = lang === 'ja' ? (event.title_ja || event.title_ko) : lang === 'en' ? (event.title_en || event.title_ko) : event.title_ko
+  const location = lang === 'ja' ? (event.location_ja || event.location_ko) : lang === 'en' ? (event.location_en || event.location_ko) : event.location_ko
 
   return (
     <div

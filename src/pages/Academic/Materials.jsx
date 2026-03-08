@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { Search } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useMaterials } from '../../hooks/useMaterials'
@@ -11,9 +12,9 @@ import EmptyState from '../../components/UI/EmptyState'
 const CATEGORIES = ['all', 'academic', 'culture', 'activity', 'general']
 
 export default function Materials() {
-  const { t, i18n } = useTranslation('academic')
+  const { t } = useTranslation('academic')
   const { t: tc } = useTranslation('common')
-  const lang = i18n.language
+  const { lang } = useLanguage()
 
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
@@ -95,7 +96,7 @@ export default function Materials() {
           <option value="">{tc('label.all')}</option>
           {schools?.map(s => (
             <option key={s.id} value={s.id}>
-              {lang === 'ko' ? s.name_ko : s.name_ja}
+              {lang === 'ja' ? (s.name_ja || s.name_ko) : lang === 'en' ? (s.name_en || s.name_ko) : s.name_ko}
             </option>
           ))}
         </select>

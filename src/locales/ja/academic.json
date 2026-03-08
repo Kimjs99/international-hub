@@ -2,6 +2,11 @@
   "schedule": {
     "title": "共有スケジュール",
     "subtitle": "日韓参加校の学術行事スケジュール",
+    "viewCalendar": "カレンダー",
+    "viewList": "一覧",
+    "period": "期間",
+    "location": "場所",
+    "content": "内容",
     "legend": {
       "academic": "学術",
       "culture": "文化",

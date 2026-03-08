@@ -47,13 +47,13 @@ export default function LightboxViewer({ photos, currentIndex, onClose, onPrev, 
       <div className="max-w-5xl max-h-screen p-16 flex flex-col items-center gap-4">
         <img
           src={photo.photo_url}
-          alt={lang === 'ko' ? (photo.caption_ko || '') : (photo.caption_ja || '')}
+          alt={lang === 'ja' ? (photo.caption_ja || photo.caption_ko || '') : lang === 'en' ? (photo.caption_en || photo.caption_ko || '') : (photo.caption_ko || '')}
           className="max-h-[80vh] object-contain rounded-lg"
           loading="lazy"
         />
         {(photo.caption_ko || photo.caption_ja) && (
           <p className="text-white/80 text-sm text-center">
-            {lang === 'ko' ? photo.caption_ko : photo.caption_ja}
+            {lang === 'ja' ? (photo.caption_ja || photo.caption_ko) : lang === 'en' ? (photo.caption_en || photo.caption_ko) : photo.caption_ko}
           </p>
         )}
         <p className="text-white/40 text-xs">{currentIndex + 1} / {photos.length}</p>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { Image } from 'lucide-react'
 import { useAlbums } from '../../hooks/useGallery'
 import { useSchools } from '../../hooks/useSchools'
@@ -8,8 +9,8 @@ import Spinner from '../../components/UI/Spinner'
 import EmptyState from '../../components/UI/EmptyState'
 
 export default function GalleryMain() {
-  const { t, i18n } = useTranslation('gallery')
-  const lang = i18n.language
+  const { t } = useTranslation('gallery')
+  const { lang } = useLanguage()
   const [selectedSchool, setSelectedSchool] = useState(null)
 
   const { data: schools = [] } = useSchools()
@@ -34,7 +35,7 @@ export default function GalleryMain() {
                 : 'bg-white text-gray-600 border-gray-300 hover:border-primary-400'
             }`}
           >
-            {lang === 'ko' ? '전체' : 'すべて'}
+            {t('label.all', { ns: 'common' })}
           </button>
           {schools.map((school) => (
             <button
@@ -46,7 +47,7 @@ export default function GalleryMain() {
                   : 'bg-white text-gray-600 border-gray-300 hover:border-primary-400'
               }`}
             >
-              {lang === 'ko' ? school.name_ko : school.name_ja}
+              {lang === 'ja' ? (school.name_ja || school.name_ko) : lang === 'en' ? (school.name_en || school.name_ko) : school.name_ko}
             </button>
           ))}
         </div>
@@ -56,13 +57,13 @@ export default function GalleryMain() {
       {isError && (
         <EmptyState
           icon={Image}
-          title={lang === 'ko' ? '데이터를 불러오지 못했습니다' : 'データの取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && albums.length === 0 && (
         <EmptyState
           icon={Image}
-          title={lang === 'ko' ? '등록된 앨범이 없습니다' : '登録されたアルバムはありません'}
+          title={t('status.empty', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && albums.length > 0 && (
@@ -78,7 +79,7 @@ export default function GalleryMain() {
                   src={album.cover_photo_url}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
-                  alt={lang === 'ko' ? album.title_ko : album.title_ja}
+                  alt={lang === 'ja' ? (album.title_ja || album.title_ko) : lang === 'en' ? (album.title_en || album.title_ko) : album.title_ko}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -88,7 +89,7 @@ export default function GalleryMain() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                 <h3 className="font-semibold text-sm">
-                  {lang === 'ko' ? album.title_ko : album.title_ja}
+                  {lang === 'ja' ? (album.title_ja || album.title_ko) : lang === 'en' ? (album.title_en || album.title_ko) : album.title_ko}
                 </h3>
                 <p className="text-xs text-white/70">{album.taken_date}</p>
               </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { useEvents } from '../../hooks/useEvents'
 import EventCard from '../../components/UI/EventCard'
 import Spinner from '../../components/UI/Spinner'
@@ -7,8 +8,8 @@ import EmptyState from '../../components/UI/EmptyState'
 import { CalendarDays } from 'lucide-react'
 
 export default function Events() {
-  const { t, i18n } = useTranslation('activities')
-  const lang = i18n.language
+  const { t } = useTranslation('activities')
+  const { lang } = useLanguage()
   const [tab, setTab] = useState('upcoming')
   const { data: events = [], isLoading, isError } = useEvents({ category: 'activity' })
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { Mail, User, ChevronLeft } from 'lucide-react'
 import { useSchool } from '../../hooks/useSchools'
 import EventCard from '../../components/UI/EventCard'
@@ -12,9 +13,9 @@ const TABS = ['info', 'events', 'materials', 'gallery']
 
 export default function SchoolDetail() {
   const { id } = useParams()
-  const { t, i18n } = useTranslation('schools')
+  const { t } = useTranslation('schools')
   const { t: tc } = useTranslation('common')
-  const lang = i18n.language
+  const { lang } = useLanguage()
   const [activeTab, setActiveTab] = useState('info')
 
   const { data: school, isLoading } = useSchool(id)
@@ -22,8 +23,8 @@ export default function SchoolDetail() {
   if (isLoading) return <Spinner className="py-32" />
   if (!school) return <EmptyState title={tc('status.empty')} />
 
-  const name = lang === 'ko' ? school.name_ko : school.name_ja
-  const description = lang === 'ko' ? school.description_ko : school.description_ja
+  const name = lang === 'ja' ? (school.name_ja || school.name_ko) : lang === 'en' ? (school.name_en || school.name_ko) : school.name_ko
+  const description = lang === 'ja' ? (school.description_ja || school.description_ko) : lang === 'en' ? (school.description_en || school.description_ko) : school.description_ko
   const isKorea = school.country === 'KR'
 
   const bannerGradient = isKorea
@@ -187,7 +188,7 @@ export default function SchoolDetail() {
                     )}
                     <div className="p-3">
                       <p className="text-sm font-medium text-gray-800 truncate">
-                        {lang === 'ko' ? album.title_ko : album.title_ja}
+                        {lang === 'ja' ? (album.title_ja || album.title_ko) : lang === 'en' ? (album.title_en || album.title_ko) : album.title_ko}
                       </p>
                       {album.photo_count != null && (
                         <p className="text-xs text-gray-400 mt-0.5">{album.photo_count} photos</p>

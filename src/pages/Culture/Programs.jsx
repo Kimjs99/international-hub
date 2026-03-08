@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { useEvents } from '../../hooks/useEvents'
 import EventCard from '../../components/UI/EventCard'
 import Badge from '../../components/UI/Badge'
@@ -22,8 +23,8 @@ const STATUS_BADGE_TYPE = {
 }
 
 export default function Programs() {
-  const { t, i18n } = useTranslation('culture')
-  const lang = i18n.language
+  const { t } = useTranslation('culture')
+  const { lang } = useLanguage()
   const { data: events = [], isLoading, isError } = useEvents({ category: 'culture' })
 
   return (

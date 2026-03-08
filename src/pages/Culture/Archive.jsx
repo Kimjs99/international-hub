@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import FileCard from '../../components/UI/FileCard'
@@ -34,8 +35,8 @@ async function fetchAvailableYears() {
 }
 
 export default function ArchivePage() {
-  const { t, i18n } = useTranslation('culture')
-  const lang = i18n.language
+  const { t } = useTranslation('culture')
+  const { lang } = useLanguage()
   const [selectedYear, setSelectedYear] = useState(null)
 
   const { data: years = [] } = useQuery({
@@ -73,7 +74,7 @@ export default function ArchivePage() {
                 : 'bg-white text-gray-600 border-gray-300 hover:border-primary-400'
             }`}
           >
-            {lang === 'ko' ? '전체' : 'すべて'}
+            {t('label.all', { ns: 'common' })}
           </button>
           {years.map((year) => (
             <button
@@ -95,13 +96,13 @@ export default function ArchivePage() {
       {isError && (
         <EmptyState
           icon={Archive}
-          title={lang === 'ko' ? '데이터를 불러오지 못했습니다' : 'データの取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && materials.length === 0 && (
         <EmptyState
           icon={Archive}
-          title={lang === 'ko' ? '등록된 자료가 없습니다' : '登録された資料はありません'}
+          title={t('status.empty', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && materials.length > 0 && (

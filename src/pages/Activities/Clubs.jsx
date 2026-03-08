@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { useClubs } from '../../hooks/useClubs'
 import SchoolBadge from '../../components/UI/SchoolBadge'
 import Spinner from '../../components/UI/Spinner'
@@ -9,8 +10,8 @@ import { Users } from 'lucide-react'
 const CATEGORIES = ['all', 'academic', 'culture', 'sports', 'volunteer']
 
 export default function Clubs() {
-  const { t, i18n } = useTranslation('activities')
-  const lang = i18n.language
+  const { t } = useTranslation('activities')
+  const { lang } = useLanguage()
   const [activeCategory, setActiveCategory] = useState('all')
 
   const filters = activeCategory !== 'all' ? { category: activeCategory } : {}
@@ -43,13 +44,13 @@ export default function Clubs() {
       {isError && (
         <EmptyState
           icon={Users}
-          title={lang === 'ko' ? '데이터를 불러오지 못했습니다' : 'データの取得に失敗しました'}
+          title={t('status.loadError', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && clubs.length === 0 && (
         <EmptyState
           icon={Users}
-          title={lang === 'ko' ? '등록된 동아리가 없습니다' : '登録されたクラブはありません'}
+          title={t('status.empty', { ns: 'common' })}
         />
       )}
       {!isLoading && !isError && clubs.length > 0 && (
@@ -65,19 +66,19 @@ export default function Clubs() {
                     src={club.cover_url}
                     className="w-full h-full object-cover"
                     loading="lazy"
-                    alt={lang === 'ko' ? club.name_ko : club.name_ja}
+                    alt={lang === 'ja' ? (club.name_ja || club.name_ko) : lang === 'en' ? (club.name_en || club.name_ko) : club.name_ko}
                   />
                 )}
               </div>
               <div className="p-4">
                 <SchoolBadge
-                  name={lang === 'ko' ? club.schools?.name_ko : club.schools?.name_ja}
+                  name={lang === 'ja' ? (club.schools?.name_ja || club.schools?.name_ko) : lang === 'en' ? (club.schools?.name_en || club.schools?.name_ko) : club.schools?.name_ko}
                 />
                 <h3 className="font-semibold mt-2 text-gray-900">
-                  {lang === 'ko' ? club.name_ko : club.name_ja}
+                  {lang === 'ja' ? (club.name_ja || club.name_ko) : lang === 'en' ? (club.name_en || club.name_ko) : club.name_ko}
                 </h3>
                 <p className="text-sm text-gray-500 line-clamp-2 mt-1">
-                  {lang === 'ko' ? club.description_ko : club.description_ja}
+                  {lang === 'ja' ? (club.description_ja || club.description_ko) : lang === 'en' ? (club.description_en || club.description_ko) : club.description_ko}
                 </p>
               </div>
             </div>

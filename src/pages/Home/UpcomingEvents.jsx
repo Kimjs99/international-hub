@@ -1,13 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { supabase } from '../../lib/supabase'
 import EventCard from '../../components/UI/EventCard'
 import Spinner from '../../components/UI/Spinner'
 import EmptyState from '../../components/UI/EmptyState'
 
 export default function UpcomingEvents() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const { lang } = useLanguage()
   const today = new Date().toISOString().split('T')[0]
 
   const { data: events, isLoading } = useQuery({
@@ -38,7 +40,7 @@ export default function UpcomingEvents() {
       ) : events?.length ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map(e => (
-            <EventCard key={e.id} event={e} lang={i18n.language} />
+            <EventCard key={e.id} event={e} lang={lang} />
           ))}
         </div>
       ) : (

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from '../../context/LanguageContext'
 import { CalendarDays, List } from 'lucide-react'
 import { format } from 'date-fns'
 import { useEvents } from '../../hooks/useEvents'
@@ -10,9 +11,9 @@ import Spinner from '../../components/UI/Spinner'
 import EmptyState from '../../components/UI/EmptyState'
 
 export default function Schedule() {
-  const { t, i18n } = useTranslation('academic')
+  const { t } = useTranslation('academic')
   const { t: tc } = useTranslation('common')
-  const lang = i18n.language
+  const { lang } = useLanguage()
   const [viewMode, setViewMode] = useState('calendar') // 'calendar' | 'list'
   const [selectedEvent, setSelectedEvent] = useState(null)
 
@@ -44,7 +45,7 @@ export default function Schedule() {
             }`}
           >
             <CalendarDays className="w-4 h-4" />
-            {lang === 'ko' ? '달력' : 'カレンダー'}
+            {t('schedule.viewCalendar')}
           </button>
           <button
             onClick={() => setViewMode('list')}
@@ -55,7 +56,7 @@ export default function Schedule() {
             }`}
           >
             <List className="w-4 h-4" />
-            {lang === 'ko' ? '목록' : '一覧'}
+            {t('schedule.viewList')}
           </button>
         </div>
       </div>
@@ -87,34 +88,34 @@ export default function Schedule() {
       <Modal
         isOpen={!!selectedEvent}
         onClose={() => setSelectedEvent(null)}
-        title={selectedEvent ? (lang === 'ko' ? selectedEvent.title_ko : selectedEvent.title_ja) : ''}
+        title={selectedEvent ? (lang === 'ja' ? (selectedEvent.title_ja || selectedEvent.title_ko) : lang === 'en' ? (selectedEvent.title_en || selectedEvent.title_ko) : selectedEvent.title_ko) : ''}
         size="md"
       >
         {selectedEvent && (
           <div className="space-y-4 text-sm text-gray-700">
             <div>
               <span className="font-medium text-gray-500 block mb-1">
-                {lang === 'ko' ? '기간' : '期間'}
+                {t('schedule.period')}
               </span>
               <span>{formatDateRange(selectedEvent)}</span>
             </div>
             {(selectedEvent.location_ko || selectedEvent.location_ja) && (
               <div>
                 <span className="font-medium text-gray-500 block mb-1">
-                  {lang === 'ko' ? '장소' : '場所'}
+                  {t('schedule.location')}
                 </span>
                 <span>
-                  {lang === 'ko' ? selectedEvent.location_ko : selectedEvent.location_ja}
+                  {lang === 'ja' ? (selectedEvent.location_ja || selectedEvent.location_ko) : lang === 'en' ? (selectedEvent.location_en || selectedEvent.location_ko) : selectedEvent.location_ko}
                 </span>
               </div>
             )}
             {(selectedEvent.description_ko || selectedEvent.description_ja) && (
               <div>
                 <span className="font-medium text-gray-500 block mb-1">
-                  {lang === 'ko' ? '내용' : '内容'}
+                  {t('schedule.content')}
                 </span>
                 <p className="whitespace-pre-wrap leading-relaxed">
-                  {lang === 'ko' ? selectedEvent.description_ko : selectedEvent.description_ja}
+                  {lang === 'ja' ? (selectedEvent.description_ja || selectedEvent.description_ko) : lang === 'en' ? (selectedEvent.description_en || selectedEvent.description_ko) : selectedEvent.description_ko}
                 </p>
               </div>
             )}

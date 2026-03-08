@@ -2,6 +2,11 @@
   "schedule": {
     "title": "공유 일정표",
     "subtitle": "한·일 참여 학교의 학술 행사 일정",
+    "viewCalendar": "달력",
+    "viewList": "목록",
+    "period": "기간",
+    "location": "장소",
+    "content": "내용",
     "legend": {
       "academic": "학술",
       "culture": "문화",

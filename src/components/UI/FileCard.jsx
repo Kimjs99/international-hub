@@ -17,8 +17,8 @@ function formatFileSize(bytes) {
 }
 
 export default function FileCard({ material, lang = 'ko', onDownload }) {
-  const title = lang === 'ko' ? material.title_ko : material.title_ja
-  const description = lang === 'ko' ? material.description_ko : material.description_ja
+  const title = lang === 'ja' ? (material.title_ja || material.title_ko) : lang === 'en' ? (material.title_en || material.title_ko) : material.title_ko
+  const description = lang === 'ja' ? (material.description_ja || material.description_ko) : lang === 'en' ? (material.description_en || material.description_ko) : material.description_ko
 
   return (
     <div className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow">

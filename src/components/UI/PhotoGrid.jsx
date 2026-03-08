@@ -17,7 +17,7 @@ export default function PhotoGrid({ photos = [], lang = 'ko' }) {
           >
             <img
               src={photo.photo_url}
-              alt={lang === 'ko' ? photo.caption_ko : photo.caption_ja}
+              alt={lang === 'ja' ? (photo.caption_ja || photo.caption_ko) : lang === 'en' ? (photo.caption_en || photo.caption_ko) : photo.caption_ko}
               className="w-full h-full object-cover"
             />
           </button>
