@@ -19,6 +19,7 @@ export default function NoticeManager() {
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const [activeTab, setActiveTab] = useState('ko')
+  const [formError, setFormError] = useState('')
 
   const { data: notices, isLoading } = useQuery({
     queryKey: ['admin', 'notices'],
@@ -57,6 +58,7 @@ export default function NoticeManager() {
       qc.invalidateQueries({ queryKey: ['admin', 'notices'] })
       closeModal()
     },
+    onError: (err) => setFormError(err.message || '저장에 실패했습니다.'),
   })
 
   const deleteMutation = useMutation({
@@ -95,6 +97,7 @@ export default function NoticeManager() {
     setEditing(null)
     setForm(EMPTY_FORM)
     setActiveTab('ko')
+    setFormError('')
   }
 
   const handleDelete = (notice) => {
@@ -255,6 +258,9 @@ export default function NoticeManager() {
             </div>
           </div>
 
+          {formError && (
+            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{formError}</p>
+          )}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">

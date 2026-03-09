@@ -21,6 +21,7 @@ export default function EventManager() {
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const [activeTab, setActiveTab] = useState('ko')
+  const [formError, setFormError] = useState('')
 
   const CATEGORY_LABELS = {
     academic: t('event.catAcademic'),
@@ -65,6 +66,7 @@ export default function EventManager() {
       qc.invalidateQueries({ queryKey: ['admin', 'events'] })
       closeModal()
     },
+    onError: (err) => setFormError(err.message || '저장에 실패했습니다.'),
   })
 
   const deleteMutation = useMutation({
@@ -106,6 +108,7 @@ export default function EventManager() {
     setEditing(null)
     setForm(EMPTY_FORM)
     setActiveTab('ko')
+    setFormError('')
   }
 
   const handleDelete = (event) => {
@@ -278,6 +281,9 @@ export default function EventManager() {
               className="w-4 h-4 rounded border-gray-300 text-primary-500" />
             <label htmlFor="is_online" className="text-sm text-gray-700">{t('event.labelOnline')}</label>
           </div>
+          {formError && (
+            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{formError}</p>
+          )}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">

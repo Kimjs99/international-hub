@@ -17,6 +17,7 @@ export default function GalleryManager() {
   const [albumModalOpen, setAlbumModalOpen] = useState(false)
   const [albumForm, setAlbumForm] = useState(EMPTY_ALBUM_FORM)
   const [uploadError, setUploadError] = useState('')
+  const [formError, setFormError] = useState('')
   const [activeTab, setActiveTab] = useState('ko')
 
   const uploadPhotos = async (albumId, files) => {
@@ -77,7 +78,9 @@ export default function GalleryManager() {
       qc.invalidateQueries({ queryKey: ['admin', 'gallery-albums'] })
       setAlbumModalOpen(false)
       setAlbumForm(EMPTY_ALBUM_FORM)
+      setFormError('')
     },
+    onError: (err) => setFormError(err.message || '저장에 실패했습니다.'),
   })
 
   const deleteAlbumMutation = useMutation({
@@ -242,7 +245,7 @@ export default function GalleryManager() {
         </table>
       </div>
 
-      <Modal isOpen={albumModalOpen} onClose={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko') }}
+      <Modal isOpen={albumModalOpen} onClose={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko'); setFormError('') }}
         title={t('gallery.createAlbum')}>
         <form onSubmit={handleAlbumSubmit} className="space-y-4">
           <div>
@@ -305,8 +308,11 @@ export default function GalleryManager() {
               className="w-4 h-4 rounded border-gray-300 text-primary-500" />
             <label htmlFor="is_public" className="text-sm text-gray-700">{t('gallery.labelPublic')}</label>
           </div>
+          {formError && (
+            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{formError}</p>
+          )}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko') }}
+            <button type="button" onClick={() => { setAlbumModalOpen(false); setAlbumForm(EMPTY_ALBUM_FORM); setActiveTab('ko'); setFormError('') }}
               className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 hover:bg-gray-50">
               {t('common.cancel')}
             </button>
