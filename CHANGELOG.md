@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.3.1] - 2026-03-09
+
+### 🐛 Bug Fixes
+- 관리자 CRUD 전체: upsert/delete 후 Dashboard 통계 캐시 즉시 반영 (`stats` invalidation 추가) (c44ef91)
+- EventCard, FileCard 카테고리 뱃지 영어 표시 → `t('category.xxx')` 번역 처리 (c44ef91)
+
+### 📝 Documentation
+- CLAUDE.md: 3언어 지원, RLS 정책 현황 표, Admin mutation 패턴 명시 (c44ef91)
+
 ## [v0.3.0] - 2026-03-09
 
 ### ✨ Features
