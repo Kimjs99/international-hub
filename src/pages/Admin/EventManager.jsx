@@ -64,6 +64,7 @@ export default function EventManager() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'events'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
       closeModal()
     },
     onError: (err) => setFormError(err.message || '저장에 실패했습니다.'),
@@ -74,7 +75,10 @@ export default function EventManager() {
       const { error } = await supabase.from('events').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'events'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'events'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
+    },
   })
 
   const openAdd = () => {

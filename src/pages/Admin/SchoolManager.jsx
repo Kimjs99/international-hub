@@ -42,6 +42,7 @@ export default function SchoolManager() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'schools'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
       closeModal()
     },
     onError: (err) => setFormError(err.message || '저장에 실패했습니다.'),
@@ -52,7 +53,10 @@ export default function SchoolManager() {
       const { error } = await supabase.from('schools').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'schools'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'schools'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
+    },
   })
 
   const openAdd = () => {

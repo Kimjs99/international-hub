@@ -14,7 +14,7 @@ export default function EventCard({ event, lang = 'ko', onClick }) {
       className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer"
     >
       <div className="flex items-start justify-between mb-3">
-        <Badge label={event.category} type={event.category} />
+        <Badge label={t(`category.${event.category}`)} type={event.category} />
         {event.is_online && (
           <span className="text-xs text-blue-600 flex items-center gap-1">
             <Globe className="w-3 h-3" /> {t('label.online')}

@@ -86,6 +86,7 @@ export default function MaterialManager() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'materials'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
       closeModal()
     },
     onError: (err) => setFormError(err.message || '저장에 실패했습니다.'),
@@ -96,7 +97,10 @@ export default function MaterialManager() {
       const { error } = await supabase.from('materials').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'materials'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'materials'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
+    },
   })
 
   const openAdd = () => {

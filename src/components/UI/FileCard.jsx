@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Download } from 'lucide-react'
 import Badge from './Badge'
 
@@ -17,6 +18,7 @@ function formatFileSize(bytes) {
 }
 
 export default function FileCard({ material, lang = 'ko', onDownload }) {
+  const { t } = useTranslation()
   const title = lang === 'ja' ? (material.title_ja || material.title_ko) : lang === 'en' ? (material.title_en || material.title_ko) : material.title_ko
   const description = lang === 'ja' ? (material.description_ja || material.description_ko) : lang === 'en' ? (material.description_en || material.description_ko) : material.description_ko
 
@@ -28,7 +30,7 @@ export default function FileCard({ material, lang = 'ko', onDownload }) {
           <h3 className="font-semibold text-gray-900 truncate">{title}</h3>
           {description && <p className="text-sm text-gray-500 mt-1 line-clamp-2">{description}</p>}
           <div className="flex items-center gap-2 mt-2">
-            <Badge label={material.category} type={material.category} />
+            <Badge label={t(`category.${material.category}`)} type={material.category} />
             {material.file_size && (
               <span className="text-xs text-gray-400">{formatFileSize(material.file_size)}</span>
             )}

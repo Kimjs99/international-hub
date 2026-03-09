@@ -76,6 +76,7 @@ export default function GalleryManager() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'gallery-albums'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
       setAlbumModalOpen(false)
       setAlbumForm(EMPTY_ALBUM_FORM)
       setFormError('')
@@ -88,7 +89,10 @@ export default function GalleryManager() {
       const { error } = await supabase.from('gallery_albums').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'gallery-albums'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'gallery-albums'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
+    },
   })
 
   const deletePhotoMutation = useMutation({

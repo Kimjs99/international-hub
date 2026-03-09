@@ -52,11 +52,13 @@ HelmetProvider → QueryClientProvider → AuthProvider → LanguageProvider →
 
 ### i18n (`src/lib/i18n.js`)
 
-- 번역 파일은 **빌드 시 JS 번들에 정적으로 포함** (`src/locales/ko/`, `src/locales/ja/`). HTTP fetch 방식이 아님.
-- 네임스페이스: `common`(기본), `home`, `schools`, `academic`, `culture`, `activities`, `gallery`, `notices`
-- 언어 감지 순서: `localStorage('language')` → 브라우저 언어
-- 컴포넌트에서 `useTranslation()` 또는 `useLanguage()` 사용
-- Supabase DB 다국어 필드는 `_ko`/`_ja` suffix 패턴 (예: `title_ko`, `title_ja`)
+- **3개 언어 지원**: `ko` / `ja` / `en`
+- 번역 파일은 **빌드 시 JS 번들에 정적으로 포함** (`src/locales/ko/`, `src/locales/ja/`, `src/locales/en/`). HTTP fetch 방식이 아님.
+- 네임스페이스: `common`(기본), `home`, `schools`, `academic`, `culture`, `activities`, `gallery`, `notices`, `admin`
+- 언어 감지 순서: `localStorage('language')` → fallback `ko`
+- 컴포넌트에서 `useTranslation('namespace')` 또는 `useLanguage()` 사용
+- Supabase DB 다국어 필드: `_ko`/`_ja`/`_en` suffix 패턴 (예: `title_ko`, `title_ja`, `title_en`)
+- 새 번역 키 추가 시 `ko/`, `ja/`, `en/` 세 언어 JSON 파일 모두 수정 필요
 
 ### Data Fetching (`src/hooks/`)
 
@@ -70,7 +72,7 @@ TanStack Query 훅. 모두 `supabase` 클라이언트를 직접 호출:
 
 ### UI Components (`src/components/UI/`)
 
-`lang` prop(`'ko'|'ja'`)을 받는 컴포넌트: `EventCard`, `FileCard`, `PhotoGrid`, `LightboxViewer`, `Calendar`.
+`lang` prop(`'ko'|'ja'|'en'`)을 받는 컴포넌트: `EventCard`, `FileCard`, `PhotoGrid`, `LightboxViewer`, `Calendar`.
 - `Calendar`: events 배열 → 월간 뷰 (카테고리 색상: academic=blue, culture=purple, activity=green, general=gray)
 - `PhotoGrid`: 사진 그리드 + `LightboxViewer` 내장 (터치 스와이프, 키보드 내비게이션)
 - `Modal`: `role="dialog"`, `aria-modal`, `aria-labelledby` 포함
@@ -79,6 +81,15 @@ TanStack Query 훅. 모두 `supabase` 클라이언트를 직접 호출:
 
 `AdminLayout`이 인증 체크 (`user` 없으면 `/login` 리디렉션). 사이드바: `AdminSidebar`.
 관리 페이지: Dashboard, SchoolManager, EventManager, MaterialManager, GalleryManager, NoticeManager, MemberManager — 모두 Supabase CRUD + Modal 폼.
+
+**Admin mutation 패턴**: 모든 관리자 페이지의 upsert/delete `onSuccess`에서 `['admin', 'stats']` 쿼리도 함께 invalidate해야 Dashboard 통계가 실시간 반영됨.
+
+```js
+onSuccess: () => {
+  qc.invalidateQueries({ queryKey: ['admin', 'xxx'] })
+  qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
+}
+```
 
 ### Design Tokens (`tailwind.config.js`)
 
@@ -92,6 +103,31 @@ fontFamily: { ko: ['Noto Sans KR'], ja: ['Noto Sans JP'] }
 `schools`, `events`, `materials`, `gallery_albums`, `gallery_photos`, `notices`, `club_groups`, `user_school_roles`
 SQL 마이그레이션: `sql/01_schema.sql` → `02_rls.sql` → `03_storage.sql` → `04_seed.sql` 순서로 실행.
 
+### Supabase RLS 주의사항
+
+`sql/02_rls.sql`에 정의된 쓰기 정책 현황:
+
+| 테이블 | SELECT | INSERT | UPDATE | DELETE |
+|--------|--------|--------|--------|--------|
+| schools | ✅ public | ❌ 없음 | ❌ 없음 | ❌ 없음 |
+| events | ✅ public | ❌ 없음 | ❌ 없음 | ❌ 없음 |
+| gallery_albums | ✅ is_public | ❌ 없음 | ❌ 없음 | ❌ 없음 |
+| gallery_photos | ✅ public | ❌ 없음 | ❌ 없음 | ❌ 없음 |
+| club_groups | ✅ is_active | ❌ 없음 | ❌ 없음 | ❌ 없음 |
+| materials | ✅ is_public | ✅ created_by 필요 | ✅ owner/manager | ❌ 없음 |
+| notices | ✅ public | ✅ created_by 필요 | ❌ 없음 | ❌ 없음 |
+
+**❌ 없음** 표시 테이블은 관리자 write 작업 시 RLS 오류 발생. Supabase SQL Editor에서 직접 정책을 추가해야 함:
+
+```sql
+-- schools, events, gallery_albums, gallery_photos, club_groups 공통 패턴
+CREATE POLICY "xxx_auth_insert" ON xxx FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "xxx_auth_update" ON xxx FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "xxx_auth_delete" ON xxx FOR DELETE TO authenticated USING (true);
+```
+
+`materials`와 `notices` INSERT는 `created_by: user.id` 필드를 payload에 포함해야 정책 통과.
+
 ### Environment Variables
 
 ```
@@ -103,11 +139,13 @@ VITE_SUPABASE_ANON_KEY=
 
 - 프로젝트: `jsmajs-9184s-projects/international-hub`
 - Production URL: https://international-hub.vercel.app
-- `vercel.json`에 SPA 리라이트 규칙 포함 (locales/assets 경로는 제외)
+- `vercel.json`에 SPA 리라이트 규칙 포함 (locales/assets 경로는 제외 — i18n 번들 접근용)
 - 배포 명령: `vercel --prod` (international-hub 디렉토리에서 실행)
 - 환경변수는 Vercel 대시보드 또는 `vercel env add`로 설정
 
 ## Current Status
 
 WF-01~14 완료. 모든 페이지 구현, 최적화(코드 스플리팅, a11y, SEO), Vercel 배포 완료.
-미구현: `role` 기반 권한 제어 (현재 관리자 접근은 로그인 여부만 체크).
+- 3개 언어(ko/ja/en) 지원 완료
+- 미구현: `role` 기반 권한 제어 (현재 관리자 접근은 로그인 여부만 체크)
+- 미구현: schools/events/gallery/clubs 테이블 write RLS 정책 (현재 Supabase에서 직접 추가 필요)

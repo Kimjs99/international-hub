@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.3.0] - 2026-03-09
+
+### ✨ Features
+- 영어(EN) 지원 추가 및 관리자 다국어 입력 UX 개선 — 언어 탭(ko/ja/en) 모달 UI, 번역 JSON en 파일 추가 (b9bba2a)
+- 전체 텍스트 i18n 전환 + 영어→일본어 버그 수정 — 하드코딩 한국어 텍스트 i18n 키로 교체 (fc4e0d7)
+- 풋터 저작권 문구 업데이트 (2026-2027, 학교명, 비영리) (fb12de7)
+
+### 🐛 Bug Fixes
+- 관리자 폼 onError 핸들러 추가 — 저장 실패 시 에러 메시지 표시 (3e207f1)
+- 전체 페이지 영어 미전환 버그 수정 (26ca509)
+- vercel.json SPA 리라이트 규칙 — locales/assets 경로 제외하여 i18n 번역 파일 접근 허용 (4c119af)
+
+### 📝 Documentation
+- CLAUDE.md 개선 및 불필요 파일 정리 (public/ 빈 폴더 제거) (6964862)
+
 ## [v0.2.0] - 2026-03-08
 
 ### ✨ Features
